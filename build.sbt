@@ -1,6 +1,7 @@
 name := """codi-insights"""
 
-organization := "de.kkegel"
+organization := "de.modicio"
+maintainer := "modicio github organisation"
 version := "0.1"
 scalaVersion := "2.13.7"
 
