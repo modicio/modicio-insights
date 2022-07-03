@@ -30,4 +30,4 @@ A running java setup is required to run this application, we recommend OpenJDK 1
 
 ### Workflows and Explanations
 
-For further explanations, check the linked thesis, here especially the chapter *Evaluations/Case-Study*. For an example workflow, check the **Experiment Instructions** part of the appendix. **An example workflow to try this application is placed in the repository root: ExperimentWorkflow.pdf**.
+For further explanations, check the linked thesis, here especially the chapter *Evaluations/Case-Study*. For an example workflow, check the **Experiment Instructions** part of the appendix. **An example workflow to try this application is given in [ExampleWorkflow](https://github.com/modicio/codi-insights/blob/main/ExampleWorkflow.pdf)**.
