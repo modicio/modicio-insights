@@ -2,7 +2,7 @@
 
 ## About
 
-This application is a minimal web starter written in Scala t odemonstrate the codi-native framework. This project was initially contributed as a part of the master thesis of Karl Kegel (KKegel) *Deep Models at Runtime for User-Driven Flexible Systems* at TU-Dresden. For more detailled background information check the thesis and the codi-native documentation and wiki.
+This application is a minimal web starter written in Scala t odemonstrate the codi-native framework. This project was initially contributed as a part of the master thesis of Karl Kegel (KKegel) *Deep Models at Runtime for User-Driven Flexible Systems ([full text](https://www.researchgate.net/publication/361725823_Deep_ModelsRuntime_for_User-Driven_Flexible_Systems))* at TU-Dresden. For more detailled background information check the thesis and the codi-native documentation and wiki.
 
 The main idea of this project is to provide a runnable and minimal application to demonstrate the framework functionality. Therefore, codi-insights provides a model view including a model editor for codi-native deep-models and an user view to simulate an application frontend to use those models at runtime. Between model updates, no downtime, data-scheme or code-changes are required.
 
