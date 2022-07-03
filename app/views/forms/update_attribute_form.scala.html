@@ -1,0 +1,14 @@
+@import views.html.helper.CSRF
+@import views.html.components.message_box_error
+@import codi.core.rules.AttributeRule
+@(value: String, propertyRule: AttributeRule, updateAction: Call, msg: Option[String])(implicit request: RequestHeader, messagesProvider: MessagesProvider)
+
+@helper.form(action = updateAction){
+    @CSRF.formField
+    @message_box_error(msg)
+    <div class="flex-container horizontal full-width stretched">
+        <div class="col-3">[@propertyRule.datatype]</div>
+        <input class="weight-2" type="text" name="newValue" placeholder="Attribute Value" value="@value"/>
+        <button class="btn btn-solid-prim btn-small">Update</button>
+    </div>
+}

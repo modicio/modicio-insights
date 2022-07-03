@@ -1,0 +1,44 @@
+@import views.html.helper.CSRF
+@import codi.core.DeepInstance
+@(selection: String, relation: String, parentInstance: DeepInstance, allowedTypes: Set[String], simple: Boolean)(implicit request: RequestHeader, messagesProvider: MessagesProvider)
+
+@helper.form(action = routes.InstanceController.addAssociation(selection, parentInstance.getInstanceId, relation, simple)) {
+    @CSRF.formField
+    <div class="flex-container vertical">
+        <div class="flex-container horizontal">
+            @if(simple) {
+                <label class="col-2">ID Link</label>
+            }else{
+                <label class="col-2">InstanceID or ExtendedInstanceID</label>
+            }
+            <input class="col-8" type="text" name="instanceId" value=""/>
+        </div>
+        @if(simple){
+            <div hidden class="flex-container horizontal m-t-mini">
+                <label class="col-2">AsType</label>
+                <select class="col-8" name="asType">
+                    <option selected="selected">associate as</option>
+                    @for(allowedType <- allowedTypes) {
+                        <option>
+                        @allowedType
+                        </option>
+                    }
+                </select>
+            </div>
+        }else{
+            <div class="flex-container horizontal m-t-mini">
+                <label class="col-2">AsType</label>
+                <select class="col-8" name="asType">
+                    <option selected="selected">associate as</option>
+                    @for(allowedType <- allowedTypes) {
+                        <option>
+                        @allowedType
+                        </option>
+                    }
+                </select>
+            </div>
+        }
+    </div>
+    <button class="btn btn-solid-prim btn-small btn-shadowed m-t-small">Add</button>
+
+}

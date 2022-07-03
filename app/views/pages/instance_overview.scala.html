@@ -1,0 +1,50 @@
+
+@import codi.core.TypeHandle
+@import codi.core.DeepInstance
+@import views.html.helper.CSRF
+
+@(types: Seq[TypeHandle], selected: String, selection: Seq[DeepInstance])(implicit request: RequestHeader, messagesProvider: MessagesProvider)
+
+@app{
+    <div class="flex-container">
+        @for(handle <- types.filter(!_.getIsTemplate)){
+            @if(handle.getTypeName == selected){
+                <div class="m-r-small"><a href="@routes.InstanceController.index(handle.getTypeName, simple = false)"><button class="btn btn-solid-prim p-l-small p-r-small">@handle.getTypeName</button></a></div>
+            }else{
+                <div class="m-r-small"><a href="@routes.InstanceController.index(handle.getTypeName, simple = false)"><button class="btn btn-solid-sec p-l-small p-r-small">@handle.getTypeName</button></a></div>
+            }
+        }
+    </div>
+
+     @if(selection.nonEmpty){
+        <div class="full-width card shadowed m-b-small m-t-medium">
+            <div class="p-t-small p-b-small p-r-medium p-l-medium">
+                    <div class="headline-text m-b-small"><b>Instances</b></div>
+                    <div class="flex-container full-width stretched horizontal m-b-mini bg-sec fc-white p-t-mini p-b-mini">
+                        <div class="m-l-small col-2"><b>hasType</b></div>
+                        <div class="m-l-small m-r-small input-medium"><b>Identity [FORK]</b></div>
+                        <div class="weight-2"><b>Title (if attribute)</b></div>
+                        <div class="m-l-medium m-r-small">Action</div>
+                    </div>
+                    @for(instance <- selection){
+                        <div class="flex-container full-width stretched horizontal m-t-mini p-t-mini p-b-mini bg-lg">
+                            <div class="m-l-small col-2">@instance.getTypeHandle.getTypeName</div>
+                            <div class="m-l-small m-r-small input-medium"><b>...@instance.getTypeHandle.getTypeIdentity.takeRight(5)</b></div>
+                            <div class="weight-2">@instance.deepValue("Title").getOrElse("[untitled]")</div>
+                            <div class="m-l-small m-r-small"><a href='@routes.InstanceController.getInstance(instance.getTypeHandle.getTypeName, instance.getInstanceId, simple=false)'>open</a></div>
+                        </div>
+                    }
+            </div>
+        </div>
+    }
+
+    @if(!selected.isBlank){
+        <div class="m-t-medium">
+          @helper.form(action = routes.InstanceController.addInstance(selected, simple=false)) {
+                        @CSRF.formField
+                        <button class="btn btn-medium btn-bordered-sec">New Instance</button>
+                    }
+        </div>
+    }
+
+}("Instance Overview")

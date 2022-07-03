@@ -1,0 +1,25 @@
+@import views.html.helper.CSRF
+
+@()(implicit request: RequestHeader, messagesProvider: MessagesProvider)
+
+@helper.form(action = routes.ModelController.addFragment()) {
+    @CSRF.formField
+    <div class="flex-container vertical">
+        <div class="flex-container horizontal">
+            <label class="col-2">Fragment Name</label>
+            <input class="col-8" type="text" name="fragmentName" value=""/>
+        </div>
+        <div class="flex-container horizontal m-t-mini">
+            <label class="col-2">Fragment Type</label>
+            <select class="col-8" name="fragmentType">
+                <option selected="selected">select</option>
+                @for(allowedType <- Seq[String]("TEMPLATE", "INSTANTIABLE")) {
+                    <option>
+                        @allowedType
+                    </option>
+                }
+            </select>
+        </div>
+    </div>
+    <button class="btn btn-solid-prim btn-small btn-shadowed m-t-small">Add</button>
+}

@@ -1,0 +1,37 @@
+@import views.html.helper.CSRF
+@import codi.core.DeepInstance
+@(fragmentName: String, identity: String)(implicit request: RequestHeader, messagesProvider: MessagesProvider)
+
+@helper.form(action = routes.ModelController.addAttributeRule(fragmentName, identity)) {
+    @CSRF.formField
+    <div class="flex-container vertical">
+        <div class="flex-container horizontal">
+            <label class="col-2">Name</label>
+            <input class="col-8" type="text" name="attributeName" value=""/>
+        </div>
+        <div class="flex-container horizontal m-t-mini">
+            <label class="col-2">nonEmpty (obligatory)</label>
+            <select class="col-8" name="nonEmpty">
+                <option selected="selected">select</option>
+                @for(allowedType <- Seq[String]("true", "false")) {
+                    <option>
+                    @allowedType
+                    </option>
+                }
+            </select>
+        </div>
+        <div class="flex-container horizontal m-t-mini">
+            <label class="col-2">Datatype</label>
+            <select class="col-8" name="datatype">
+                <option selected="selected">String</option>
+                @for(allowedType <- Seq[String]("Number", "Datetime")) {
+                    <option>
+                    @allowedType
+                    </option>
+                }
+            </select>
+        </div>
+    </div>
+    <button class="btn btn-solid-prim btn-small btn-shadowed m-t-small">Add</button>
+
+}

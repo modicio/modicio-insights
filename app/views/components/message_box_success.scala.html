@@ -1,0 +1,7 @@
+@(msg: Option[String] = None)
+
+@if(msg.nonEmpty) {
+    <div class="callout callout-positive shadowed m-b-mini" >
+        <div class="p-ltrb-small">@msg.get</div>
+    </div>
+}

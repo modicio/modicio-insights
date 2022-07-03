@@ -1,0 +1,13 @@
+@import codi.core.rules.AssociationRule
+
+@(rule: AssociationRule)
+
+<div class="flex-container">
+    <div class="bg-sec fc-white p-ltrb-mini">@rule.serialiseSimple()</div>
+    <div class="weight-2 flex-container">
+        <div class="m-l-medium bg-prim fc-white p-ltrb-mini">relationName: @rule.associationName</div>
+        <div class="m-l-mini bg-prim fc-white p-ltrb-mini">targetName: @rule.targetName</div>
+        <div class="m-l-mini bg-prim fc-white p-ltrb-mini">multiplicity: @rule.multiplicity</div>
+        <div class="m-l-mini bg-prim-dark p-ltrb-mini"><a class="fc-white" href='@routes.ModelController.fragment(rule.targetName, "#")'>open</a></div>
+    </div>
+</div>
