@@ -9,7 +9,8 @@
       "associations": [
         ":partOf:Project:1"
       ],
-      "attributes": []
+      "attributes": [],
+      "values": []
     },
     {
       "name": "#:Project",
@@ -23,7 +24,8 @@
       "attributes": [
         ":Responsible:STRING:true",
         ":Deadline:DATETIME:false"
-      ]
+      ],
+      "values": []
     },
     {
       "name": "#:Todo",
@@ -35,7 +37,8 @@
       "attributes": [
         ":Content:STRING:false",
         ":State:BOOLEAN:false"
-      ]
+      ],
+      "values": []
     }
   ]
 }

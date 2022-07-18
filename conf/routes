@@ -33,10 +33,13 @@ GET         /model/fragment/:name                                   controllers.
 # Add a new Fragment with some predefined values but EMPTY RULESETS
 POST        /model/fragment                                         controllers.ModelController.addFragment()
 
+POST        /model/fragment/:name/singleton/add                     controllers.ModelController.updateSingleton(name: String, identity: String)
+
 # Add a new rule to the HEAD fragment
 POST        /model/fragment/:name/rules/childOf_new                 controllers.ModelController.addExtensionRule(name: String, identity: String)
 POST        /model/fragment/:name/rules/link_new                    controllers.ModelController.addLinkRule(name: String, identity: String)
 POST        /model/fragment/:name/rules/attribute_new               controllers.ModelController.addAttributeRule(name: String, identity: String)
+POST        /model/fragment/:name/rules/value_new                   controllers.ModelController.addConcreteValueRule(name: String, identity: String)
 
 # Delete a rule from the HEAD fragment
 POST        /model/fragment/:name/rules/:ruleId/delete              controllers.ModelController.removeRule(name: String, identity: String, ruleId: String)

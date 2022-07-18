@@ -18,7 +18,9 @@
 
 package controllers
 
+import codi.core.Fragment
 import env.RegistryProvider
+
 import javax.inject.{Inject, Singleton}
 import modules.instances.formdata.{NewAssociationForm, UpdateStringValueForm}
 import play.api.Logging
@@ -57,9 +59,17 @@ class InstanceController @Inject()(cc: ControllerComponents) extends
 
   def addInstance(selection: String, simple: Boolean): Action[AnyContent] = Action.async { implicit request: Request[AnyContent] =>
     RegistryProvider.getRegistry flatMap (registry => {
-      val instanceFactory = RegistryProvider.instanceFactory
-      instanceFactory.newInstance(selection) map (instance => {
-        Redirect(routes.InstanceController.getInstance(selection, instance.getInstanceId, simple))
+      registry.getType(selection, Fragment.REFERENCE_IDENTITY) flatMap (reference => {
+        reference.get.hasSingleton flatMap (hasSingleton => {
+          if(hasSingleton){
+            Future.failed(throw new UnsupportedOperationException("This model-element is a singleton-instance and can not be instantiated manually"))
+          }else{
+            val instanceFactory = RegistryProvider.instanceFactory
+            instanceFactory.newInstance(selection) map (instance => {
+              Redirect(routes.InstanceController.getInstance(selection, instance.getInstanceId, simple))
+            })
+          }
+        })
       })
     })
   }
@@ -69,14 +79,16 @@ class InstanceController @Inject()(cc: ControllerComponents) extends
       registry.get(instanceId) flatMap (instanceOption => {
         instanceOption.get.unfold() flatMap (deepInstance => {
           Future.sequence(
-            deepInstance.getAssociations.map(association =>
+            deepInstance.getDeepAssociations.map(association =>
               registry.get(association.targetInstanceId) flatMap (instance =>
                 instance.get.unfold()))) map (associatedInstances => {
-            if(simple){
-              Ok(views.html.pages.simple_instance_details(selection, deepInstance, associatedInstances))
-            }else {
-              Ok(views.html.pages.instance_details(selection, deepInstance, associatedInstances))
-            }
+            val associationData = deepInstance.getDeepAssociations
+            val associationMap = associationData.map(data => (data, associatedInstances.find(_.getInstanceId == data.targetInstanceId).get))
+            //if (simple) {
+              Ok(views.html.pages.simple_instance_details(selection, deepInstance, associationMap))
+            //} else {
+            //  Ok(views.html.pages.instance_details(selection, deepInstance, associatedInstances))
+            //}
           })
         })
       })
@@ -85,22 +97,22 @@ class InstanceController @Inject()(cc: ControllerComponents) extends
 
   def updateAttribute(selection: String, instanceId: String, attributeName: String, simple: Boolean): Action[AnyContent] =
     Action.async { implicit request: Request[AnyContent] =>
-    UpdateStringValueForm.form.bindFromRequest fold(
-      errorForm => {
-        Future.successful(Redirect(routes.InstanceController.getInstance(selection, instanceId, simple)))
-      },
-      data => {
-        val attributeValue = data.newValue
-        RegistryProvider.getRegistry flatMap (registry => {
-          registry.get(instanceId) flatMap (instanceOption => {
-            instanceOption.get.unfold() map (deepInstance => {
-              deepInstance.assignDeepValue(attributeName, attributeValue)
-              Redirect(routes.InstanceController.getInstance(selection, instanceId, simple))
+      UpdateStringValueForm.form.bindFromRequest fold(
+        errorForm => {
+          Future.successful(Redirect(routes.InstanceController.getInstance(selection, instanceId, simple)))
+        },
+        data => {
+          val attributeValue = data.newValue
+          RegistryProvider.getRegistry flatMap (registry => {
+            registry.get(instanceId) flatMap (instanceOption => {
+              instanceOption.get.unfold() map (deepInstance => {
+                deepInstance.assignDeepValue(attributeName, attributeValue)
+                Redirect(routes.InstanceController.getInstance(selection, instanceId, simple))
+              })
             })
           })
         })
-      })
-  }
+    }
 
   def addAssociation(selection: String, instanceId: String, relation: String, simple: Boolean): Action[AnyContent] = Action.async { implicit request: Request[AnyContent] =>
     NewAssociationForm.form.bindFromRequest fold(

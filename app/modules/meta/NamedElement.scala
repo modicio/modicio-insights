@@ -19,6 +19,7 @@
 package modules.meta
 
 import codi.core.rules.{AssociationRule, AttributeRule, BehaviourRule, ConstraintRule}
+import codi.core.values.ConcreteValue
 import codi.core.{BaseModel, Fragment}
 
 import scala.concurrent.Future
@@ -41,4 +42,5 @@ class NamedElement extends BaseModel(name = "NamedElement", identity = Fragment.
 
   override def getBehaviourRules: Set[BehaviourRule] = Set()
 
+  override def getConcreteValues: Set[ConcreteValue] = Set()
 }

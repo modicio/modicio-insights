@@ -18,8 +18,7 @@
 
 package env
 
-import codi.core.{InstanceFactory, Registry, TypeFactory}
-import codi.core.rules.Rule
+import codi.core.{InstanceFactory, Registry, Rule, TypeFactory}
 import codi.nativelang.input.{NativeInput, NativeInputParser, NativeInputTransformator}
 import codi.nativelang.logic.{SimpleDefinitionVerifier, SimpleMapRegistry, SimpleModelVerifier}
 import modules.meta.NamedElement
@@ -38,7 +37,7 @@ object RegistryProvider {
 
   private var registry: Option[Registry] = None
 
-  private def init(): Future[Unit] = {
+  private def init(): Future[Any] = {
 
     //Rules generate their own UUIDs:ss
     Rule.enableAutoID()
@@ -48,7 +47,7 @@ object RegistryProvider {
     typeFactory.setRegistry(registry.get)
     instanceFactory.setRegistry(registry.get)
 
-    val source = Source.fromFile("resources/json_hybrid_rule_example.json")
+    val source = Source.fromFile("resources/cars_example.json")
     val fileContents = source.getLines.mkString
     println(fileContents)
     source.close()
@@ -59,6 +58,9 @@ object RegistryProvider {
     for{
       _ <- new NamedElement().setup(registry.get, definitionVerifier)
       _ <- transformator.extendModel(initialInput)
+      allReferences <- registry.get.getReferences
+      unfoldedReferences <- Future.sequence(allReferences.filter(t => !t.getIsTemplate).map(_.unfold()))
+      _ <- Future.sequence(unfoldedReferences.filter(_.isConcrete).map(_.updateSingletonRoot()))
     } yield Future.successful()
   }
 

@@ -43,7 +43,7 @@
         </div>
 
         <div class="m-l-medium m-r-small m-t-medium">
-            <strong>Can Associate:</strong> @for(typeValue <- instance.deepAssociationTypes){
+            <strong>Can Associate:</strong> @for(typeValue <- instance.deepAssociationRuleMap.keySet){
             <span class="p-ltrb-mini bg-sec fc-white">&#60;= @typeValue</span>
         }
         </div>
@@ -79,7 +79,7 @@
             @for((prop, rule) <- instance.deepAttributeMap()) {
                 <div class="flex-container full-width stretched horizontal m-t-mini p-t-mini p-b-mini bg-lg">
                     <div class="m-l-small col-3">@rule.serialiseSimple()</div>
-                    <div class="weight-2">@update_attribute_form(prop.value, rule, routes.InstanceController.updateAttribute(selection, instance.getInstanceId, prop.key, simple=false), None)</div>
+                    <div class="weight-2">@update_attribute_form(prop, rule, routes.InstanceController.updateAttribute(selection, instance.getInstanceId, prop.key, simple=false), None)</div>
                 </div>
             }
         </div>
@@ -88,7 +88,7 @@
     <div class="full-width card shadowed m-b-small m-t-medium">
         <div class="p-t-small p-b-small p-r-medium p-l-medium">
             <div class="headline-text m-b-small"><b>Associations</b></div>
-            @if(instance.getAssociations.nonEmpty){
+            @if(instance.getDeepAssociations.nonEmpty){
                         <div class="flex-container full-width stretched horizontal m-b-mini bg-sec fc-white p-t-mini p-b-mini">
                             <div class="m-l-small col-2"><b>Relation</b></div>
                             <div class="m-l-small col-2"><b>hasType</b></div>

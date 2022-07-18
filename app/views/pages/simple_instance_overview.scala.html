@@ -44,7 +44,7 @@
                     </div>
                     @for(instance <- selection){
                         <div class="flex-container full-width stretched horizontal m-t-mini p-t-mini p-b-mini bg-lg">
-                            <div class="m-l-small m-r-small input-medium">...@instance.getTypeHandle.getTypeIdentity.takeRight(5)</div>
+                            <div class="m-l-small m-r-small input-medium">@instance.getTypeHandle.getTypeIdentity.takeRight(5)</div>
                             <div class="weight-2"><b>@instance.deepValue("Title").getOrElse("[untitled]")</b></div>
                             <div class=" m-l-small m-r-small"><a href='@routes.InstanceController.getInstance(instance.getTypeHandle.getTypeName, instance.getInstanceId, simple=true)'>open</a></div>
                         </div>

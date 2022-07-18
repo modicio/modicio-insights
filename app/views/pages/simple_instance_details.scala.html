@@ -19,7 +19,9 @@
 @import views.html.forms.update_attribute_form
 @import views.html.forms.new_association_form
 @import scala.collection.mutable
-@(selection: String, instance: DeepInstance, associatedInstances: Set[DeepInstance])(implicit request: RequestHeader, messagesProvider: MessagesProvider)
+@import codi.core.datamappings.AssociationData
+@import codi.core.datamappings.AssociationData
+@(selection: String, instance: DeepInstance, associatedInstances: Set[(AssociationData, DeepInstance)])(implicit request: RequestHeader, messagesProvider: MessagesProvider)
 
 @app {
     <div class="full-width flex-container vertical centered">
@@ -31,7 +33,7 @@
                 }
             </div>
             <div class="m-l-medium m-r-small m-t-medium">
-                <strong>This instance can be associated with...</strong> @for(typeValue <- instance.deepAssociationTypes){
+                <strong>This instance can be associated with...</strong> @for(typeValue <- instance.deepAssociationRuleMap.keySet){
                 <span class="p-ltrb-mini bg-sec fc-white">&#60;= @typeValue</span>
             }
             </div>
@@ -60,7 +62,7 @@
                 <div class="flex-container full-width stretched horizontal m-t-mini p-t-mini p-b-mini bg-lg">
                     <div class="m-l-small col-2">@rule.name</div>
                     <div class="m-l-small col-2">@rule.nonEmpty</div>
-                    <div class="weight-2">@update_attribute_form(prop.value, rule, routes.InstanceController.updateAttribute(selection, instance.getInstanceId, prop.key, simple=true), None)</div>
+                    <div class="weight-2">@update_attribute_form(prop, rule, routes.InstanceController.updateAttribute(selection, instance.getInstanceId, prop.key, simple=true), None)</div>
                 </div>
             }
         </div>
@@ -69,22 +71,26 @@
     <div class="col-7 card shadowed m-b-small m-t-medium p-l-small p-r-small">
         <div class="p-t-small p-b-small p-r-medium p-l-medium">
             <div class="headline-text m-b-small"><b>Associations</b></div>
-            @if(instance.getAssociations.nonEmpty){
+            @if(instance.getDeepAssociations.nonEmpty){
                         <div class="flex-container full-width stretched horizontal m-b-mini bg-sec fc-white p-t-mini p-b-mini">
                             <div class="m-l-small col-2"><b>Relation</b></div>
                             <div class="m-l-small col-2"><b>hasType</b></div>
                             <div class="weight-2"><b>Title</b></div>
                             <div class="m-l-medium m-r-small">Action</div>
                         </div>
-                        @for(association <- instance.getAssociations){
-                            @defining(associatedInstances.find(_.getInstanceId == association.targetInstanceId).get){aInstance =>
+                        @for(association <- associatedInstances){
                                 <div class="flex-container full-width stretched horizontal m-t-mini p-t-mini p-b-mini bg-lg">
-                                    <div class="m-l-small col-2">@association.byRelation</div>
-                                    <div class="m-l-small col-2">@aInstance.getTypeHandle.getTypeName</div>
-                                    <div class="weight-2"><b>@aInstance.deepValue("Title").getOrElse("[untitled]")</b></div>
-                                    <div class="m-l-small m-r-small"><a href='@routes.InstanceController.getInstance(aInstance.getTypeHandle.getTypeName, aInstance.getInstanceId, simple=true)'>open</a></div>
+                                    <div class="m-l-small col-2">@association._1.byRelation</div>
+                                    @if(association._1.isFinal) {
+                                        <div class="m-l-small col-2">(final concept)</div>
+                                        <div class="weight-2"><b>@association._2.getTypeHandle.getTypeName</b></div>
+                                    }else{
+                                        <div class="m-l-small col-2">@association._2.getTypeHandle.getTypeName</div>
+                                        <div class="weight-2"><b>@association._2.deepValue("Title").getOrElse("[untitled]")</b></div>
+                                    }
+                                    <div class="m-l-small m-r-small"><a href='@routes.InstanceController.getInstance(association._2.getTypeHandle.getTypeName,association._2.getInstanceId, simple=true)'>open</a></div>
                                 </div>
-                            }
+
                         }
             }else{
                 [Empty]

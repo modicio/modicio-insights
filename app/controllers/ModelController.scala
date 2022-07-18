@@ -20,9 +20,11 @@ package controllers
 
 import codi.core.Fragment
 import codi.core.rules.{AssociationRule, AttributeRule, ExtensionRule}
+import codi.core.values.ConcreteValue
 import env.RegistryProvider
+
 import javax.inject.{Inject, Singleton}
-import modules.model.formdata.{NewAttributeRuleForm, NewExtensionRuleForm, NewFragmentForm, NewLinkRuleForm}
+import modules.model.formdata.{NewAttributeRuleForm, NewConcreteValueRuleForm, NewExtensionRuleForm, NewFragmentForm, NewLinkRuleForm}
 import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc._
@@ -44,12 +46,34 @@ class ModelController @Inject()(cc: ControllerComponents) extends
   def fragment(name: String, identity: String): Action[AnyContent] = Action.async { implicit request: Request[AnyContent] =>
     RegistryProvider.getRegistry flatMap (registry => {
       registry.getType(name, identity) flatMap (typeOption => {
-        typeOption.get.unfold() map (typeHandle => {
-          Ok(views.html.pages.fragment_details(typeHandle))
-        })
+        for{
+          typeHandle <- typeOption.get.unfold()
+          hasSingleton <- typeHandle.hasSingleton
+          hasSingletonRoot <- typeHandle.hasSingletonRoot
+        } yield {
+          Ok(views.html.pages.fragment_details(typeHandle, hasSingleton, hasSingletonRoot))
+        }
       })
     })
   }
+
+  def updateSingleton(name: String, identity: String): Action[AnyContent] = Action.async { implicit request: Request[AnyContent] =>
+    RegistryProvider.getRegistry flatMap (registry => {
+      registry.getType(name, identity) flatMap (typeOption => {
+        if(identity != Fragment.REFERENCE_IDENTITY){
+          Future.successful(Redirect(routes.ModelController.fragment(name, identity)))
+        }else {
+          for {
+            typeHandle <- typeOption.get.unfold()
+            _ <- typeHandle.updateSingletonRoot()
+          } yield {
+            Redirect(routes.ModelController.fragment(name, identity))
+          }
+        }
+      })
+    })
+  }
+
 
   def addFragment(): Action[AnyContent] = Action.async { implicit request: Request[AnyContent] =>
     NewFragmentForm.form.bindFromRequest fold(
@@ -98,6 +122,27 @@ class ModelController @Inject()(cc: ControllerComponents) extends
             typeOption.get.unfold() map (typeHandle => {
               val nonEmpty = data.nonEmpty == "true"
               val newRule = AttributeRule.create(data.attributeName, data.datatype, nonEmpty)
+              if (newRule.verify()) {
+                typeHandle.applyRule(newRule)
+              }
+              Redirect(routes.ModelController.fragment(name, identity))
+            })
+          })
+        })
+      })
+  }
+
+  def addConcreteValueRule(name: String, identity: String): Action[AnyContent] = Action.async { implicit request: Request[AnyContent] =>
+    NewConcreteValueRuleForm.form.bindFromRequest fold(
+      errorForm => {
+        Future.successful(Redirect(routes.ModelController.fragment(name, identity)))
+      },
+      data => {
+        RegistryProvider.getRegistry flatMap (registry => {
+          registry.getType(name, identity) flatMap (typeOption => {
+            typeOption.get.unfold() map (typeHandle => {
+              val isFinal = data.isFinal == "true"
+              val newRule = ConcreteValue.create(data.valueType, data.valueName, (data.content + ":" + isFinal).split(":"))
               if (newRule.verify()) {
                 typeHandle.applyRule(newRule)
               }
