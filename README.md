@@ -15,7 +15,7 @@ Most functionality regarding codi-native is further explained and extracted as p
 This case-study application contains releases to follow the revision of codi-native:
 
 * [0.1a - experiment](https://github.com/modicio/codi-insights/releases/tag/0.1a) contains the version used to execute the experiment/user-study of Karl Kegel's master thesis linked above.
-* [0.1.2 - MULTI]() contains the version applying newer concepts from the paper submission MULTI 2022. This includes: 
+* [0.1.2 - MULTI](https://github.com/modicio/codi-insights/releases/tag/0.1.2) contains the version applying newer concepts from the paper submission MULTI 2022. This includes: 
    * Modelling of model-space instance values
    * Creation of singleton-instances
    
