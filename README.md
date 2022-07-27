@@ -1,5 +1,7 @@
 # codi-insights
 
+:bulb: **A demonstration video is provided on YouTube [here](https://youtu.be/wL5HmuD2zJg)**.
+
 ## About
 
 This application is a minimal web starter written in Scala to odemonstrate the codi-native framework. This project was initially contributed as a part of the master thesis of Karl Kegel (KKegel) *Deep Models at Runtime for User-Driven Flexible Systems ([full text](https://www.researchgate.net/publication/361725823_Deep_ModelsRuntime_for_User-Driven_Flexible_Systems))* at TU-Dresden. For more detailled background information check the thesis and the codi-native documentation and wiki.
