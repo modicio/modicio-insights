@@ -15,7 +15,6 @@
 * You should have received a copy of the GNU General Public License
 * along with this program. If not, see <https://www.gnu.org/licenses/>.
 * *@
-@import codi.core.TypeHandle
 @import views.html.components.property_rule_view
 @import views.html.components.extension_rule_view
 @import views.html.components.association_rule_view
@@ -26,6 +25,7 @@
 @import views.html.forms.update_singleton_form
 @import views.html.components.value_rule_view
 @import views.html.forms.new_value_rule_form
+@import modicio.codi.TypeHandle
 @(typeHandle: TypeHandle, hasSingleton: Boolean, hasSingletonRoot: Boolean)(implicit request: RequestHeader, messagesProvider: MessagesProvider)
 
 @app{

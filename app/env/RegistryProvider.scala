@@ -18,9 +18,9 @@
 
 package env
 
-import codi.core.{InstanceFactory, Registry, Rule, TypeFactory}
-import codi.nativelang.input.{NativeInput, NativeInputParser, NativeInputTransformator}
-import codi.nativelang.logic.{SimpleDefinitionVerifier, SimpleMapRegistry, SimpleModelVerifier}
+import modicio.codi.{InstanceFactory, Registry, Rule, TypeFactory}
+import modicio.native.defaults.{SimpleDefinitionVerifier, SimpleMapRegistry, SimpleModelVerifier}
+import modicio.native.input.{NativeDSL, NativeDSLParser, NativeDSLTransformer}
 import modules.meta.NamedElement
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -37,6 +37,8 @@ object RegistryProvider {
 
   private var registry: Option[Registry] = None
 
+  var transformer: Option[NativeDSLTransformer] = None
+
   private def init(): Future[Any] = {
 
     //Rules generate their own UUIDs:ss
@@ -47,21 +49,23 @@ object RegistryProvider {
     typeFactory.setRegistry(registry.get)
     instanceFactory.setRegistry(registry.get)
 
-    val source = Source.fromFile("resources/cars_example.json")
+    val source = Source.fromFile("resources/json_hybrid_rule_example.json")
     val fileContents = source.getLines.mkString
     println(fileContents)
     source.close()
 
-    val initialInput: NativeInput = NativeInputParser.parse(fileContents)
-    val transformator: NativeInputTransformator = new NativeInputTransformator(registry.get, definitionVerifier, modelVerifier)
+    val initialInput: NativeDSL = NativeDSLParser.parse(fileContents)
+    transformer = Some(new NativeDSLTransformer(registry.get, definitionVerifier, modelVerifier))
 
-    for{
-      _ <- new NamedElement().setup(registry.get, definitionVerifier)
-      _ <- transformator.extendModel(initialInput)
-      allReferences <- registry.get.getReferences
-      unfoldedReferences <- Future.sequence(allReferences.filter(t => !t.getIsTemplate).map(_.unfold()))
-      _ <- Future.sequence(unfoldedReferences.filter(_.isConcrete).map(_.updateSingletonRoot()))
-    } yield Future.successful()
+    //(new NamedElement()).setup(registry.get, definitionVerifier) flatMap (_ => {
+      for {
+          _ <- transformer.get.extend(initialInput)
+          allReferences <- registry.get.getReferences
+          unfoldedReferences <- Future.sequence(allReferences.filter(t => !t.getIsTemplate).map(_.unfold()))
+          //_ <- Future.sequence(unfoldedReferences.filter(_.isConcrete).map(_.updateSingletonRoot()))
+      } yield Future.successful()
+    //})
+
   }
 
   def getRegistry: Future[Registry] = {

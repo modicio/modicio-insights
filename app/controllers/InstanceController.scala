@@ -18,8 +18,9 @@
 
 package controllers
 
-import codi.core.Fragment
 import env.RegistryProvider
+import modicio.codi.Fragment
+import modicio.native.input.NativeDSLParser
 
 import javax.inject.{Inject, Singleton}
 import modules.instances.formdata.{NewAssociationForm, UpdateStringValueForm}
@@ -92,6 +93,19 @@ class InstanceController @Inject()(cc: ControllerComponents) extends
           })
         })
       })
+    })
+  }
+
+  def getInstanceNative(selection: String, instanceId: String, simple: Boolean): Action[AnyContent] = Action.async { implicit request: Request[AnyContent] =>
+    RegistryProvider.getRegistry flatMap (registry => {
+
+      RegistryProvider.transformer.get.decompose(Some(instanceId)) map (data => {
+        val raw = NativeDSLParser.produceString(data)
+
+        Ok(views.html.pages.instance_native(raw))
+      })
+
+
     })
   }
 

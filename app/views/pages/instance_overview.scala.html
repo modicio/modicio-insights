@@ -15,10 +15,9 @@
 * You should have received a copy of the GNU General Public License
 * along with this program. If not, see <https://www.gnu.org/licenses/>.
 * *@
-@import codi.core.TypeHandle
-@import codi.core.DeepInstance
 @import views.html.helper.CSRF
-
+@import modicio.codi.TypeHandle
+@import modicio.codi.DeepInstance
 @(types: Seq[TypeHandle], selected: String, selection: Seq[DeepInstance])(implicit request: RequestHeader, messagesProvider: MessagesProvider)
 
 @app{

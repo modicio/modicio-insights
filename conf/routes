@@ -50,6 +50,8 @@ POST        /instances/:selection                                   controllers.
 
 GET         /instances/:selection/:instanceId                       controllers.InstanceController.getInstance(selection: String, instanceId: String, simple: Boolean)
 
+GET         /instances/:selection/:instanceId/native                controllers.InstanceController.getInstanceNative(selection: String, instanceId: String, simple: Boolean)
+
 POST        /instances/:selection/:instanceId/:attributeName        controllers.InstanceController.updateAttribute(selection: String, instanceId: String, attributeName: String, simple: Boolean)
 
 POST        /instances/:selection/:instanceId                       controllers.InstanceController.addAssociation(selection: String, instanceId: String, relation: String, simple: Boolean)

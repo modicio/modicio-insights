@@ -16,7 +16,7 @@
 * along with this program. If not, see <https://www.gnu.org/licenses/>.
 * *@
 @import views.html.helper.CSRF
-@import codi.core.values.ConcreteValue
+@import modicio.codi.values.ConcreteValue
 @(fragmentName: String, identity: String)(implicit request: RequestHeader, messagesProvider: MessagesProvider)
 
 @helper.form(action = routes.ModelController.addConcreteValueRule(fragmentName, identity)) {

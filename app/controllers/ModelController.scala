@@ -18,10 +18,10 @@
 
 package controllers
 
-import codi.core.Fragment
-import codi.core.rules.{AssociationRule, AttributeRule, ExtensionRule}
-import codi.core.values.ConcreteValue
 import env.RegistryProvider
+import modicio.codi.Fragment
+import modicio.codi.rules.{AssociationRule, AttributeRule, ExtensionRule}
+import modicio.codi.values.ConcreteValue
 
 import javax.inject.{Inject, Singleton}
 import modules.model.formdata.{NewAttributeRuleForm, NewConcreteValueRuleForm, NewExtensionRuleForm, NewFragmentForm, NewLinkRuleForm}

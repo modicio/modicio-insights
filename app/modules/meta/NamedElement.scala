@@ -18,9 +18,9 @@
 
 package modules.meta
 
-import codi.core.rules.{AssociationRule, AttributeRule, BehaviourRule, ConstraintRule}
-import codi.core.values.ConcreteValue
-import codi.core.{BaseModel, Fragment}
+import modicio.codi.rules.{AssociationRule, AttributeRule, BehaviourRule, ConstraintRule}
+import modicio.codi.values.ConcreteValue
+import modicio.codi.{BaseModel, Fragment}
 
 import scala.concurrent.Future
 

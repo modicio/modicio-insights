@@ -15,12 +15,10 @@
 * You should have received a copy of the GNU General Public License
 * along with this program. If not, see <https://www.gnu.org/licenses/>.
 * *@
-@import codi.core.DeepInstance
 @import views.html.forms.update_attribute_form
 @import views.html.forms.new_association_form
-@import scala.collection.mutable
-@import codi.core.datamappings.AssociationData
-@import codi.core.datamappings.AssociationData
+@import modicio.codi.DeepInstance
+@import modicio.codi.datamappings.AssociationData
 @(selection: String, instance: DeepInstance, associatedInstances: Set[(AssociationData, DeepInstance)])(implicit request: RequestHeader, messagesProvider: MessagesProvider)
 
 @app {
