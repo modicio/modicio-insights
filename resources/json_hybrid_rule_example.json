@@ -1,6 +1,18 @@
 {
   "model": [
     {
+      "name": "#:NamedElement",
+      "template": true,
+      "childOf": [
+      ],
+      "associations": [
+      ],
+      "attributes": [
+        ":Title:STRING:true"
+      ],
+      "values": []
+    },
+    {
       "name": "#:ProjectItem",
       "template": true,
       "childOf": [
@@ -9,7 +21,8 @@
       "associations": [
         ":partOf:Project:1"
       ],
-      "attributes": [],
+      "attributes": [
+      ],
       "values": []
     },
     {
