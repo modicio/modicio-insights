@@ -57,14 +57,14 @@ object RegistryProvider {
     val initialInput: NativeDSL = NativeDSLParser.parse(fileContents)
     transformer = Some(new NativeDSLTransformer(registry.get, definitionVerifier, modelVerifier))
 
-    //(new NamedElement()).setup(registry.get, definitionVerifier) flatMap (_ => {
+    new NamedElement().setup(registry.get, definitionVerifier) flatMap (_ => {
       for {
           _ <- transformer.get.extend(initialInput)
           allReferences <- registry.get.getReferences
           unfoldedReferences <- Future.sequence(allReferences.filter(t => !t.getIsTemplate).map(_.unfold()))
-          //_ <- Future.sequence(unfoldedReferences.filter(_.isConcrete).map(_.updateSingletonRoot()))
+          _ <- Future.sequence(unfoldedReferences.filter(_.isConcrete).map(_.updateSingletonRoot()))
       } yield Future.successful()
-    //})
+    })
 
   }
 
