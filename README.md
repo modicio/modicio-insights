@@ -43,7 +43,7 @@ A running java setup is required to run this application, the dist requires Open
 ###  Custom Build
 
 * Clone this repository
-* Install SBT (Scala build system) and a JDK (14+ is tested, 11+ may work)
+* Install SBT (Scala build system) and a **JDK 11**
 * Go to the root directory where this README and the ``build.sbt`` is located.
 * Execute ``sbt dist`` and check the terminal output where the generated JAR package is located
 * Alternatively, execute ``sbt run`` directly to start the app without generating a JAR
