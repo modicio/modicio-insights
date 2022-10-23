@@ -19,9 +19,9 @@
 package controllers
 
 import env.RegistryProvider
-import modicio.codi.Fragment
-import modicio.codi.rules.{AssociationRule, AttributeRule, ExtensionRule}
-import modicio.codi.values.ConcreteValue
+import modicio.core.ModelElement
+import modicio.core.rules.{AssociationRule, AttributeRule, ConnectionInterface, ParentRelationRule}
+import modicio.core.values.ConcreteValue
 
 import javax.inject.{Inject, Singleton}
 import modules.model.formdata.{NewAttributeRuleForm, NewConcreteValueRuleForm, NewExtensionRuleForm, NewFragmentForm, NewLinkRuleForm}
@@ -29,6 +29,7 @@ import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 
+import scala.collection.mutable
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
@@ -60,7 +61,7 @@ class ModelController @Inject()(cc: ControllerComponents) extends
   def updateSingleton(name: String, identity: String): Action[AnyContent] = Action.async { implicit request: Request[AnyContent] =>
     RegistryProvider.getRegistry flatMap (registry => {
       registry.getType(name, identity) flatMap (typeOption => {
-        if(identity != Fragment.REFERENCE_IDENTITY){
+        if(identity != ModelElement.REFERENCE_IDENTITY){
           Future.successful(Redirect(routes.ModelController.fragment(name, identity)))
         }else {
           for {
@@ -75,7 +76,7 @@ class ModelController @Inject()(cc: ControllerComponents) extends
   }
 
 
-  def addFragment(): Action[AnyContent] = Action.async { implicit request: Request[AnyContent] =>
+  def addModelElement(): Action[AnyContent] = Action.async { implicit request: Request[AnyContent] =>
     NewFragmentForm.form.bindFromRequest fold(
       errorForm => {
         Future.successful(Redirect(routes.ModelController.index()))
@@ -85,8 +86,8 @@ class ModelController @Inject()(cc: ControllerComponents) extends
           val typeFactory = RegistryProvider.typeFactory
           val typeName = data.fragmentName
           val isTemplate = data.fragmentType == "TEMPLATE"
-          val newType = typeFactory.newType(typeName, Fragment.REFERENCE_IDENTITY, isTemplate)
-          registry.setType(newType) map (_ => Redirect(routes.ModelController.fragment(typeName, Fragment.REFERENCE_IDENTITY)))
+          typeFactory.newType(typeName, ModelElement.REFERENCE_IDENTITY, isTemplate) flatMap (newType =>
+          registry.setType(newType) map (_ => Redirect(routes.ModelController.fragment(typeName, ModelElement.REFERENCE_IDENTITY))))
         })
       })
   }
@@ -100,7 +101,7 @@ class ModelController @Inject()(cc: ControllerComponents) extends
         RegistryProvider.getRegistry flatMap (registry => {
           registry.getType(name, identity) flatMap (typeOption => {
             typeOption.get.unfold() map (typeHandle => {
-              val newRule = ExtensionRule.create(data.parent, Fragment.REFERENCE_IDENTITY)
+              val newRule = ParentRelationRule.create(data.parent, ModelElement.REFERENCE_IDENTITY)
               if (newRule.verify()) {
                 typeHandle.applyRule(newRule)
               }
@@ -162,7 +163,8 @@ class ModelController @Inject()(cc: ControllerComponents) extends
         RegistryProvider.getRegistry flatMap (registry => {
           registry.getType(name, identity) flatMap (typeOption => {
             typeOption.getOrElse(throw new Exception()).unfold() map (typeHandle => {
-              val newRule = AssociationRule.create(data.linkName, data.targetName, data.multiplicity)
+              val connectionInterface = new ConnectionInterface(mutable.Set())
+              val newRule = AssociationRule.create(data.linkName, data.targetName, data.multiplicity, connectionInterface)
               if (newRule.verify()) {
                 typeHandle.applyRule(newRule)
               }

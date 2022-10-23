@@ -16,7 +16,7 @@
 * along with this program. If not, see <https://www.gnu.org/licenses/>.
 * *@
 @import views.html.helper.CSRF
-@import modicio.codi.DeepInstance
+@import modicio.core.DeepInstance
 @(selection: String, relation: String, parentInstance: DeepInstance, allowedTypes: Set[String], simple: Boolean)(implicit request: RequestHeader, messagesProvider: MessagesProvider)
 
 @helper.form(action = routes.InstanceController.addAssociation(selection, parentInstance.getInstanceId, relation, simple)) {

@@ -19,8 +19,8 @@
 package controllers
 
 import env.RegistryProvider
-import modicio.codi.Fragment
-import modicio.native.input.NativeDSLParser
+import modicio.core.ModelElement
+import modicio.nativelang.input.NativeDSLParser
 
 import javax.inject.{Inject, Singleton}
 import modules.instances.formdata.{NewAssociationForm, UpdateStringValueForm}
@@ -60,7 +60,7 @@ class InstanceController @Inject()(cc: ControllerComponents) extends
 
   def addInstance(selection: String, simple: Boolean): Action[AnyContent] = Action.async { implicit request: Request[AnyContent] =>
     RegistryProvider.getRegistry flatMap (registry => {
-      registry.getType(selection, Fragment.REFERENCE_IDENTITY) flatMap (reference => {
+      registry.getType(selection, ModelElement.REFERENCE_IDENTITY) flatMap (reference => {
         reference.get.hasSingleton flatMap (hasSingleton => {
           if(hasSingleton){
             Future.failed(throw new UnsupportedOperationException("This model-element is a singleton-instance and can not be instantiated manually"))

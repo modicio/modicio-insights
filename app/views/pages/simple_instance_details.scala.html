@@ -17,8 +17,8 @@
 * *@
 @import views.html.forms.update_attribute_form
 @import views.html.forms.new_association_form
-@import modicio.codi.DeepInstance
-@import modicio.codi.datamappings.AssociationData
+@import modicio.core.DeepInstance
+@import modicio.core.datamappings.AssociationData
 @(selection: String, instance: DeepInstance, associatedInstances: Set[(AssociationData, DeepInstance)])(implicit request: RequestHeader, messagesProvider: MessagesProvider)
 
 @app {

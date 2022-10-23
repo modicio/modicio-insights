@@ -15,6 +15,7 @@
 * You should have received a copy of the GNU General Public License
 * along with this program. If not, see <https://www.gnu.org/licenses/>.
 * *@
+@import modicio.core.TypeHandle
 @import views.html.components.property_rule_view
 @import views.html.components.extension_rule_view
 @import views.html.components.association_rule_view
@@ -25,7 +26,6 @@
 @import views.html.forms.update_singleton_form
 @import views.html.components.value_rule_view
 @import views.html.forms.new_value_rule_form
-@import modicio.codi.TypeHandle
 @(typeHandle: TypeHandle, hasSingleton: Boolean, hasSingletonRoot: Boolean)(implicit request: RequestHeader, messagesProvider: MessagesProvider)
 
 @app{
@@ -40,12 +40,12 @@
         </div>
 
         <div class="bg-block-1 m-t-mini p-ltrb-mini">
-            @if(typeHandle.iterator.get.get.getExtensionRules.isEmpty){
+            @if(typeHandle.iterator.get.get.getParentRelationRules.isEmpty){
                 <div class="col-2"><b>childOf</b></div><div class="weight-2">[ ] ROOT ENTITY</div>
             }else{
                 <b>childOf</b>
                 <div class="m-l-medium m-t-mini">
-                @for(extensionRule <- typeHandle.iterator.get.get.getExtensionRules){
+                @for(extensionRule <- typeHandle.iterator.get.get.getParentRelationRules){
                     <div class="m-t-medium"></div>
                     @extension_rule_view(extensionRule)
                     @if(!hasSingleton) {

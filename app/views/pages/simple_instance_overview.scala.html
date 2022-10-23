@@ -16,8 +16,8 @@
 * along with this program. If not, see <https://www.gnu.org/licenses/>.
 * *@
 @import views.html.helper.CSRF
-@import modicio.codi.TypeHandle
-@import modicio.codi.DeepInstance
+@import modicio.core.TypeHandle
+@import modicio.core.DeepInstance
 @(types: Seq[TypeHandle], selected: String, selection: Seq[DeepInstance])(implicit request: RequestHeader, messagesProvider: MessagesProvider)
 
 @app{

@@ -18,10 +18,9 @@
 
 package env
 
-import modicio.codi.{InstanceFactory, Registry, Rule, TypeFactory}
-import modicio.native.defaults.{SimpleDefinitionVerifier, SimpleMapRegistry, SimpleModelVerifier}
-import modicio.native.input.{NativeDSL, NativeDSLParser, NativeDSLTransformer}
-import modules.meta.NamedElement
+import modicio.core.{InstanceFactory, ModelElement, Registry, Rule, TimeIdentity, TypeFactory}
+import modicio.nativelang.defaults.{SimpleDefinitionVerifier, SimpleMapRegistry, SimpleModelVerifier}
+import modicio.nativelang.input.{NativeDSL, NativeDSLParser, NativeDSLTransformer}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -57,21 +56,23 @@ object RegistryProvider {
     val initialInput: NativeDSL = NativeDSLParser.parse(fileContents)
     transformer = Some(new NativeDSLTransformer(registry.get, definitionVerifier, modelVerifier))
 
-    new NamedElement().setup(registry.get, definitionVerifier) flatMap (_ => {
-      for {
-          _ <- transformer.get.extend(initialInput)
-          allReferences <- registry.get.getReferences
-          unfoldedReferences <- Future.sequence(allReferences.filter(t => !t.getIsTemplate).map(_.unfold()))
-          _ <- Future.sequence(unfoldedReferences.filter(_.isConcrete).map(_.updateSingletonRoot()))
-      } yield Future.successful()
-    })
+
+    for {
+      root <- typeFactory.newType(ModelElement.ROOT_NAME, ModelElement.REFERENCE_IDENTITY, isTemplate = true, Some(TimeIdentity.create))
+      _ <- registry.get.setType(root)
+      _ <- transformer.get.extend(initialInput)
+      allReferences <- registry.get.getReferences
+      unfoldedReferences <- Future.sequence(allReferences.filter(t => !t.getIsTemplate).map(_.unfold()))
+      _ <- Future.sequence(unfoldedReferences.filter(_.isConcrete).map(_.updateSingletonRoot()))
+    } yield Future.successful()
+
 
   }
 
   def getRegistry: Future[Registry] = {
-    if(registry.isDefined){
+    if (registry.isDefined) {
       Future.successful(registry.get)
-    }else{
+    } else {
       init() map (_ => registry.get)
     }
 

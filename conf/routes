@@ -31,7 +31,7 @@ GET         /model                                                  controllers.
 # Show the details and rules of a specific Fragment
 GET         /model/fragment/:name                                   controllers.ModelController.fragment(name: String, identity: String)
 # Add a new Fragment with some predefined values but EMPTY RULESETS
-POST        /model/fragment                                         controllers.ModelController.addFragment()
+POST        /model/fragment                                         controllers.ModelController.addModelElement()
 
 POST        /model/fragment/:name/singleton/add                     controllers.ModelController.updateSingleton(name: String, identity: String)
 
