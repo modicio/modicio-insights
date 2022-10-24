@@ -19,10 +19,10 @@
 @(rule: ParentRelationRule)
 
 <div class="flex-container">
-    <div class="bg-sec fc-white p-ltrb-mini">@rule.serialiseSimple()</div>
+    <!--<div class="bg-sec fc-white p-ltrb-mini">@rule.serialiseSimple()</div>-->
     <div class="weight-2 flex-container">
-        <div class="m-l-medium bg-prim fc-white p-ltrb-mini">name: @rule.parentName</div>
-        <div class="m-l-mini bg-prim fc-white p-ltrb-mini">identity: @rule.parentIdentity.takeRight(5)</div>
-        <div class="m-l-mini bg-prim-dark p-ltrb-mini"><a class="fc-white " href="@routes.ModelController.fragment(rule.parentName, rule.parentIdentity)">open</a></div>
+        <div class="bg-sec fc-white p-ltrb-mini">name: @rule.parentName</div>
+        <div class="m-l-mini bg-sec fc-white p-ltrb-mini">identity: @rule.parentIdentity.takeRight(5)</div>
+        <div class="m-l-mini bg-prim p-ltrb-mini"><a class="fc-white " href="@routes.ModelController.fragment(rule.parentName, rule.parentIdentity)">open</a></div>
     </div>
 </div>

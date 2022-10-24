@@ -24,7 +24,7 @@
 @app {
     <div class="full-width flex-container vertical centered">
     <div class="col-7 card shadowed m-b-small m-t-medium p-ltrb-small">
-            <a target="blank" href="@routes.InstanceController.getInstanceNative(selection, instance.getInstanceId, simple = true)">View Native Model</a>
+            <a target="blank" href="@routes.InstanceController.getInstanceNative(selection, instance.getInstanceId)">View Native Model</a>
             <div class="m-l-medium m-r-small m-t-small">
                 <strong>This instance is a...</strong> @for(typeValue <- instance.getTypeClosure){
                     <span class="p-ltrb-mini bg-sec fc-white">@typeValue</span>
@@ -60,7 +60,7 @@
                 <div class="flex-container full-width stretched horizontal m-t-mini p-t-mini p-b-mini bg-lg">
                     <div class="m-l-small col-2">@rule.name</div>
                     <div class="m-l-small col-2">@rule.nonEmpty</div>
-                    <div class="weight-2">@update_attribute_form(prop, rule, routes.InstanceController.updateAttribute(selection, instance.getInstanceId, prop.key, simple=true), None)</div>
+                    <div class="weight-2">@update_attribute_form(prop, rule, routes.InstanceController.updateAttribute(selection, instance.getInstanceId, prop.key), None)</div>
                 </div>
             }
         </div>
@@ -86,7 +86,7 @@
                                         <div class="m-l-small col-2">@association._2.getTypeHandle.getTypeName</div>
                                         <div class="weight-2"><b>@association._2.deepValue("Title").getOrElse("[untitled]")</b></div>
                                     }
-                                    <div class="m-l-small m-r-small"><a href='@routes.InstanceController.getInstance(association._2.getTypeHandle.getTypeName,association._2.getInstanceId, simple=true)'>open</a></div>
+                                    <div class="m-l-small m-r-small"><a href='@routes.InstanceController.getInstance(association._2.getTypeHandle.getTypeName,association._2.getInstanceId)'>open</a></div>
                                 </div>
 
                         }
@@ -98,7 +98,7 @@
                     <div class="m-t-medium flex-container vertical">
                         <div><strong>@associationRule:</strong></div>
                         <div>
-                            @new_association_form(selection, associationRule, instance, instance.deepAssociationRuleMap(associationRule).toSet, simple=true)
+                            @new_association_form(selection, associationRule, instance, instance.deepAssociationRuleMap(associationRule).toSet)
                         </div>
                     </div>
 

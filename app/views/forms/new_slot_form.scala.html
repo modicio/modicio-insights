@@ -16,24 +16,25 @@
 * along with this program. If not, see <https://www.gnu.org/licenses/>.
 * *@
 @import views.html.helper.CSRF
-@import modicio.core.DeepInstance
 @import modicio.core.TypeHandle
+@import modicio.core.TimeIdentity
 @(associationId: String, parentHandle: TypeHandle, variants: Seq[Long])(implicit request: RequestHeader, messagesProvider: MessagesProvider)
 
 @helper.form(action = routes.ModelController.addSlot(parentHandle.getTypeName, parentHandle.getTypeIdentity, associationId)) {
     @CSRF.formField
     <div class="flex-container vertical">
         <div class="flex-container horizontal m-t-mini">
-            <label class="col-2">Variant Slot</label>
-            <select class="col-8" name="selection">
+            <label class="col-2 p-ltrb-mini">Add Variant Slot</label>
+            <select class="input-large" name="selection">
                 <option selected="selected">select</option>
                 @for(variant <- variants) {
-                    <option>
-                        @variant
+                    <option value="@variant">
+                        @TimeIdentity.prettyPrint(variant)
                     </option>
                 }
             </select>
+            <button class="btn btn-solid-prim btn-small btn-shadowed">Add</button>
         </div>
     </div>
-    <button class="btn btn-solid-prim btn-small btn-shadowed m-t-small">Add</button>
+
 }

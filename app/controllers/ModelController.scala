@@ -54,7 +54,7 @@ class ModelController @Inject()(cc: ControllerComponents) extends
           allTypes <- registry.getTypes
           allVariants <- registry.getVariants
         } yield {
-          Ok(views.html.pages.fragment_details(typeHandle, allTypes.toSeq, allVariants.map(_._1), hasSingleton, hasSingletonRoot))
+          Ok(views.html.pages.fragment_details(typeHandle, allTypes.toSeq, allVariants.map(_._1).distinct, hasSingleton, hasSingletonRoot))
         }
       })
     })

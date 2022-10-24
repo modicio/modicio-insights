@@ -61,6 +61,7 @@ object RegistryProvider {
       root <- typeFactory.newType(ModelElement.ROOT_NAME, ModelElement.REFERENCE_IDENTITY, isTemplate = true, Some(TimeIdentity.create))
       _ <- registry.get.setType(root)
       _ <- transformer.get.extend(initialInput)
+      _ <- registry.get.incrementVariant
       allReferences <- registry.get.getReferences
       unfoldedReferences <- Future.sequence(allReferences.filter(t => !t.getIsTemplate).map(_.unfold()))
       _ <- Future.sequence(unfoldedReferences.filter(_.isConcrete).map(_.updateSingletonRoot()))

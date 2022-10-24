@@ -19,10 +19,10 @@
 @(rule: AttributeRule)
 
 <div class="flex-container">
-    <div class="bg-sec fc-white p-ltrb-mini">@rule.serialiseSimple()</div>
+    <!--<div class="bg-sec fc-white p-ltrb-mini">@rule.serialiseSimple()</div>-->
     <div class="weight-2 flex-container">
-        <div class="m-l-medium bg-prim fc-white p-ltrb-mini">name: @rule.name</div>
-        <div class="m-l-mini bg-prim fc-white p-ltrb-mini">dataType: @rule.datatype</div>
-        <div class="m-l-mini bg-prim fc-white p-ltrb-mini">nonEmpty: @rule.nonEmpty</div>
+        <div class="bg-sec fc-white p-ltrb-mini">name: @rule.name</div>
+        <div class="m-l-mini bg-sec fc-white p-ltrb-mini">dataType: @rule.datatype</div>
+        <div class="m-l-mini bg-sec fc-white p-ltrb-mini">nonEmpty: @rule.nonEmpty</div>
     </div>
 </div>

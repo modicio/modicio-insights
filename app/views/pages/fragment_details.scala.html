@@ -27,6 +27,7 @@
 @import views.html.components.value_rule_view
 @import views.html.forms.new_value_rule_form
 @import views.html.forms.new_slot_form
+@import modicio.core.TimeIdentity
 @(typeHandle: TypeHandle, allTypes: Seq[String], allVariants: Seq[Long], hasSingleton: Boolean, hasSingletonRoot: Boolean)(implicit request: RequestHeader, messagesProvider: MessagesProvider)
 
 @app{
@@ -35,9 +36,17 @@
         <div class="flex-container bg-block-1 m-t-mini p-ltrb-mini">
             <div class="col-2"><b>name</b></div><div class="weight-2">@{typeHandle.getTypeIdentity.takeRight(5)+":"+typeHandle.getTypeName}</div>
         </div>
-
         <div class="flex-container bg-block-1 m-t-mini p-ltrb-mini">
             <div class="col-2"><b>template</b></div><div class="weight-2">@typeHandle.getIsTemplate</div>
+        </div>
+        <div class="flex-container bg-block-1 m-t-mini p-ltrb-mini">
+            <div class="col-2"><b>variant</b></div><div class="weight-2">@TimeIdentity.prettyPrintExtended(typeHandle.getTimeIdentity.variantTime)</div>
+        </div>
+        <div class="flex-container bg-block-1 m-t-mini p-ltrb-mini">
+            <div class="col-2"><b>version</b></div><div class="weight-2">@TimeIdentity.prettyPrintExtended(typeHandle.getTimeIdentity.versionTime)</div>
+        </div>
+        <div class="flex-container bg-block-1 m-t-mini p-ltrb-mini">
+            <div class="col-2"><b>running</b></div><div class="weight-2">@TimeIdentity.prettyPrintExtended(typeHandle.getTimeIdentity.runningTime)</div>
         </div>
 
         <div class="bg-block-1 m-t-mini p-ltrb-mini">

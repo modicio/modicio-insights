@@ -15,16 +15,25 @@
 * You should have received a copy of the GNU General Public License
 * along with this program. If not, see <https://www.gnu.org/licenses/>.
 * *@
-
 @import modicio.core.rules.AssociationRule
 @(rule: AssociationRule)
-
-<div class="flex-container">
-    <div class="bg-sec fc-white p-ltrb-mini">@rule.serialiseSimple()</div>
-    <div class="weight-2 flex-container">
-        <div class="m-l-medium bg-prim fc-white p-ltrb-mini">relationName: @rule.associationName</div>
-        <div class="m-l-mini bg-prim fc-white p-ltrb-mini">targetName: @rule.targetName</div>
-        <div class="m-l-mini bg-prim fc-white p-ltrb-mini">multiplicity: @rule.multiplicity</div>
-        <div class="m-l-mini bg-prim-dark p-ltrb-mini"><a class="fc-white" href='@routes.ModelController.fragment(rule.targetName, "#")'>open</a></div>
+<div>
+    <div class="flex-container">
+        <!--<div class="bg-sec fc-white p-ltrb-mini">@rule.serialiseSimple()</div>-->
+        <div class="weight-2 flex-container">
+            <div class="bg-sec fc-white p-ltrb-mini">relationName: @rule.associationName</div>
+            <div class="m-l-mini bg-sec fc-white p-ltrb-mini">targetName: @rule.targetName</div>
+            <div class="m-l-mini bg-sec fc-white p-ltrb-mini">multiplicity: @rule.multiplicity</div>
+            <div class="m-l-mini bg-prim p-ltrb-mini"><a class="fc-white" href='@routes.ModelController.fragment(rule.targetName, "#")'>open</a></div>
+        </div>
     </div>
+    @for(slot <- rule.getInterface.getSlots){
+        <div class="flex-container">
+            <div class="bg-sec fc-white p-ltrb-mini"> [SLOT] @rule.targetName</div>
+            <div class="weight-2 flex-container">
+                <div class="m-l-medium bg-prim fc-white p-ltrb-mini"> &#64; @slot.targetVariantTime</div>
+                <div class="m-l-mini bg-prim-dark p-ltrb-mini"><a class="fc-white" href='#'>delete</a></div>
+            </div>
+        </div>
+    }
 </div>

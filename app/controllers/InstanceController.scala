@@ -36,29 +36,21 @@ class InstanceController @Inject()(cc: ControllerComponents) extends
   AbstractController(cc) with I18nSupport with Logging {
 
 
-  def index(selection: String, simple: Boolean): Action[AnyContent] = Action.async { implicit request: Request[AnyContent] =>
+  def index(selection: String): Action[AnyContent] = Action.async { implicit request: Request[AnyContent] =>
     RegistryProvider.getRegistry flatMap (registry => {
       registry.getReferences flatMap (references => {
         if (selection.isBlank) {
-          if (simple) {
             Future.successful(Ok(views.html.pages.simple_instance_overview(references.toSeq, "", Seq())))
-          } else {
-            Future.successful(Ok(views.html.pages.instance_overview(references.toSeq, "", Seq())))
-          }
         } else {
           registry.getAll(selection) map (deepInstances => {
-            if (simple) {
-              Ok(views.html.pages.simple_instance_overview(references.toSeq, selection, deepInstances.toSeq))
-            } else {
-              Ok(views.html.pages.instance_overview(references.toSeq, selection, deepInstances.toSeq))
-            }
+            Ok(views.html.pages.simple_instance_overview(references.toSeq, selection, deepInstances.toSeq))
           })
         }
       })
     })
   }
 
-  def addInstance(selection: String, simple: Boolean): Action[AnyContent] = Action.async { implicit request: Request[AnyContent] =>
+  def addInstance(selection: String): Action[AnyContent] = Action.async { implicit request: Request[AnyContent] =>
     RegistryProvider.getRegistry flatMap (registry => {
       registry.getType(selection, ModelElement.REFERENCE_IDENTITY) flatMap (reference => {
         reference.get.hasSingleton flatMap (hasSingleton => {
@@ -67,7 +59,7 @@ class InstanceController @Inject()(cc: ControllerComponents) extends
           }else{
             val instanceFactory = RegistryProvider.instanceFactory
             instanceFactory.newInstance(selection) map (instance => {
-              Redirect(routes.InstanceController.getInstance(selection, instance.getInstanceId, simple))
+              Redirect(routes.InstanceController.getInstance(selection, instance.getInstanceId))
             })
           }
         })
@@ -75,7 +67,7 @@ class InstanceController @Inject()(cc: ControllerComponents) extends
     })
   }
 
-  def getInstance(selection: String, instanceId: String, simple: Boolean): Action[AnyContent] = Action.async { implicit request: Request[AnyContent] =>
+  def getInstance(selection: String, instanceId: String): Action[AnyContent] = Action.async { implicit request: Request[AnyContent] =>
     RegistryProvider.getRegistry flatMap (registry => {
       registry.get(instanceId) flatMap (instanceOption => {
         instanceOption.get.unfold() flatMap (deepInstance => {
@@ -85,18 +77,14 @@ class InstanceController @Inject()(cc: ControllerComponents) extends
                 instance.get.unfold()))) map (associatedInstances => {
             val associationData = deepInstance.getDeepAssociations
             val associationMap = associationData.map(data => (data, associatedInstances.find(_.getInstanceId == data.targetInstanceId).get))
-            //if (simple) {
               Ok(views.html.pages.simple_instance_details(selection, deepInstance, associationMap))
-            //} else {
-            //  Ok(views.html.pages.instance_details(selection, deepInstance, associatedInstances))
-            //}
           })
         })
       })
     })
   }
 
-  def getInstanceNative(selection: String, instanceId: String, simple: Boolean): Action[AnyContent] = Action.async { implicit request: Request[AnyContent] =>
+  def getInstanceNative(selection: String, instanceId: String): Action[AnyContent] = Action.async { implicit request: Request[AnyContent] =>
     RegistryProvider.getRegistry flatMap (registry => {
 
       RegistryProvider.transformer.get.decompose(Some(instanceId)) map (data => {
@@ -109,11 +97,11 @@ class InstanceController @Inject()(cc: ControllerComponents) extends
     })
   }
 
-  def updateAttribute(selection: String, instanceId: String, attributeName: String, simple: Boolean): Action[AnyContent] =
+  def updateAttribute(selection: String, instanceId: String, attributeName: String): Action[AnyContent] =
     Action.async { implicit request: Request[AnyContent] =>
       UpdateStringValueForm.form.bindFromRequest fold(
         errorForm => {
-          Future.successful(Redirect(routes.InstanceController.getInstance(selection, instanceId, simple)))
+          Future.successful(Redirect(routes.InstanceController.getInstance(selection, instanceId)))
         },
         data => {
           val attributeValue = data.newValue
@@ -121,17 +109,17 @@ class InstanceController @Inject()(cc: ControllerComponents) extends
             registry.get(instanceId) flatMap (instanceOption => {
               instanceOption.get.unfold() map (deepInstance => {
                 deepInstance.assignDeepValue(attributeName, attributeValue)
-                Redirect(routes.InstanceController.getInstance(selection, instanceId, simple))
+                Redirect(routes.InstanceController.getInstance(selection, instanceId))
               })
             })
           })
         })
     }
 
-  def addAssociation(selection: String, instanceId: String, relation: String, simple: Boolean): Action[AnyContent] = Action.async { implicit request: Request[AnyContent] =>
+  def addAssociation(selection: String, instanceId: String, relation: String): Action[AnyContent] = Action.async { implicit request: Request[AnyContent] =>
     NewAssociationForm.form.bindFromRequest fold(
       errorForm => {
-        Future.successful(Redirect(routes.InstanceController.getInstance(selection, instanceId, simple)))
+        Future.successful(Redirect(routes.InstanceController.getInstance(selection, instanceId)))
       },
       data => {
         var associatedInstanceId = data.instanceId
@@ -152,7 +140,7 @@ class InstanceController @Inject()(cc: ControllerComponents) extends
         } yield (targetInstance, associatedInstance)).map(res => {
           val (targetInstance, associatedInstance) = res
           targetInstance.associate(associatedInstance, associateAsType, relation)
-          Redirect(routes.InstanceController.getInstance(selection, instanceId, simple))
+          Redirect(routes.InstanceController.getInstance(selection, instanceId))
         })
       })
   }
