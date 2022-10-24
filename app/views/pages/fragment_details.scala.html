@@ -26,6 +26,7 @@
 @import views.html.forms.update_singleton_form
 @import views.html.components.value_rule_view
 @import views.html.forms.new_value_rule_form
+@import views.html.forms.new_slot_form
 @(typeHandle: TypeHandle, allTypes: Seq[String], allVariants: Seq[Long], hasSingleton: Boolean, hasSingletonRoot: Boolean)(implicit request: RequestHeader, messagesProvider: MessagesProvider)
 
 @app{
@@ -81,6 +82,7 @@
             @for(associationRule <- typeHandle.iterator.get.get.getAssociationRules) {
                 <div class="m-t-mini"></div>
                 @association_rule_view(associationRule)
+                @new_slot_form(associationRule.id, typeHandle, allVariants)
                 @if(!hasSingleton){
                     @delete_rule_form(typeHandle.getTypeName, typeHandle.getTypeIdentity, associationRule.id)
                 }

@@ -17,9 +17,10 @@
 * *@
 @import views.html.helper.CSRF
 @import modicio.core.DeepInstance
-@(associationId: String, parentInstance: DeepInstance, variants: Seq[Long])(implicit request: RequestHeader, messagesProvider: MessagesProvider)
+@import modicio.core.TypeHandle
+@(associationId: String, parentHandle: TypeHandle, variants: Seq[Long])(implicit request: RequestHeader, messagesProvider: MessagesProvider)
 
-@helper.form(action = routes.ModelController.addSlot(parentInstance.getTypeHandle.getTypeName, parentInstance.getInstanceId, associationId)) {
+@helper.form(action = routes.ModelController.addSlot(parentHandle.getTypeName, parentHandle.getTypeIdentity, associationId)) {
     @CSRF.formField
     <div class="flex-container vertical">
         <div class="flex-container horizontal m-t-mini">
