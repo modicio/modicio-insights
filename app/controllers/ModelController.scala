@@ -80,7 +80,7 @@ class ModelController @Inject()(cc: ControllerComponents) extends
 
   def addModelElement(): Action[AnyContent] = Action.async { implicit request: Request[AnyContent] =>
     NewFragmentForm.form.bindFromRequest fold(
-      errorForm => {
+      _ => {
         Future.successful(Redirect(routes.ModelController.index()))
       },
       data => {
@@ -96,7 +96,7 @@ class ModelController @Inject()(cc: ControllerComponents) extends
 
   def addExtensionRule(name: String, identity: String): Action[AnyContent] = Action.async { implicit request: Request[AnyContent] =>
     NewExtensionRuleForm.form.bindFromRequest fold(
-      errorForm => {
+      _ => {
         Future.successful(Redirect(routes.ModelController.fragment(name, identity)))
       },
       data => {
@@ -116,7 +116,7 @@ class ModelController @Inject()(cc: ControllerComponents) extends
 
   def addAttributeRule(name: String, identity: String): Action[AnyContent] = Action.async { implicit request: Request[AnyContent] =>
     NewAttributeRuleForm.form.bindFromRequest fold(
-      errorForm => {
+      _ => {
         Future.successful(Redirect(routes.ModelController.fragment(name, identity)))
       },
       data => {
@@ -137,7 +137,7 @@ class ModelController @Inject()(cc: ControllerComponents) extends
 
   def addConcreteValueRule(name: String, identity: String): Action[AnyContent] = Action.async { implicit request: Request[AnyContent] =>
     NewConcreteValueRuleForm.form.bindFromRequest fold(
-      errorForm => {
+      _ => {
         Future.successful(Redirect(routes.ModelController.fragment(name, identity)))
       },
       data => {
@@ -158,7 +158,7 @@ class ModelController @Inject()(cc: ControllerComponents) extends
 
   def addLinkRule(name: String, identity: String): Action[AnyContent] = Action.async { implicit request: Request[AnyContent] =>
     NewLinkRuleForm.form.bindFromRequest fold(
-      errorForm => {
+      _ => {
         Future.successful(Redirect(routes.ModelController.fragment(name, identity)))
       },
       data => {
@@ -179,15 +179,15 @@ class ModelController @Inject()(cc: ControllerComponents) extends
 
   def addSlot(name: String, identity: String, ruleId: String): Action[AnyContent] = Action.async { implicit request: Request[AnyContent] =>
     StringSelectionForm.form.bindFromRequest fold(
-      errorForm => {
+      _ => {
         Future.successful(Redirect(routes.ModelController.fragment(name, identity)))
       },
       data => {
         RegistryProvider.getRegistry flatMap (registry => {
           registry.getType(name, identity) flatMap (typeOption => {
             typeOption.getOrElse(throw new Exception()).unfold() map (typeHandle => {
-              val variantTime = data.selection
-              //TODO
+              val variantTime = data.selection.toLong
+              typeHandle.applySlot()
               Redirect(routes.ModelController.fragment(name, identity))
             })
           })
