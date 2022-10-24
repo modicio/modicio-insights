@@ -16,31 +16,23 @@
 * along with this program. If not, see <https://www.gnu.org/licenses/>.
 * *@
 @import views.html.helper.CSRF
-@(fragmentName: String, identity: String, types: Seq[String])(implicit request: RequestHeader, messagesProvider: MessagesProvider)
+@import modicio.core.DeepInstance
+@(associationId: String, parentInstance: DeepInstance, variants: Seq[Long])(implicit request: RequestHeader, messagesProvider: MessagesProvider)
 
-@helper.form(action = routes.ModelController.addLinkRule(fragmentName, identity)) {
+@helper.form(action = routes.ModelController.addSlot(parentInstance.getTypeHandle.getTypeName, parentInstance.getInstanceId, associationId)) {
     @CSRF.formField
     <div class="flex-container vertical">
-        <div class="flex-container horizontal">
-            <label class="col-2">linkName</label>
-            <input class="col-8" type="text" name="linkName" value=""/>
-        </div>
-        <div class="flex-container horizontal">
-            <label class="col-2">target typeName</label>
-            <select class="col-8" name="targetName">
+        <div class="flex-container horizontal m-t-mini">
+            <label class="col-2">Variant Slot</label>
+            <select class="col-8" name="selection">
                 <option selected="selected">select</option>
-                @for(target <- types) {
+                @for(variant <- variants) {
                     <option>
-                        @target
+                        @variant
                     </option>
                 }
             </select>
         </div>
-        <div class="flex-container horizontal">
-            <label class="col-2">multiplicity ( * | Int | Int...Int | Int...* )</label>
-            <input class="col-8" type="text" name="multiplicity" value=""/>
-        </div>
     </div>
     <button class="btn btn-solid-prim btn-small btn-shadowed m-t-small">Add</button>
-
 }

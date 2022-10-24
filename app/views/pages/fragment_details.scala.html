@@ -26,7 +26,7 @@
 @import views.html.forms.update_singleton_form
 @import views.html.components.value_rule_view
 @import views.html.forms.new_value_rule_form
-@(typeHandle: TypeHandle, hasSingleton: Boolean, hasSingletonRoot: Boolean)(implicit request: RequestHeader, messagesProvider: MessagesProvider)
+@(typeHandle: TypeHandle, allTypes: Seq[String], allVariants: Seq[Long], hasSingleton: Boolean, hasSingletonRoot: Boolean)(implicit request: RequestHeader, messagesProvider: MessagesProvider)
 
 @app{
     <div>
@@ -137,7 +137,7 @@
         <div class="full-width card shadowed m-b-small m-t-medium">
             <div class="p-t-small p-b-small p-r-medium p-l-medium">
                 <div class="headline-text m-b-small"><b>New LINK Rule</b></div>
-                @new_link_rule_form(typeHandle.getTypeName, typeHandle.getTypeIdentity)
+                @new_link_rule_form(typeHandle.getTypeName, typeHandle.getTypeIdentity, allTypes)
             </div>
         </div>
 

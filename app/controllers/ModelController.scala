@@ -24,7 +24,7 @@ import modicio.core.rules.{AssociationRule, AttributeRule, ConnectionInterface, 
 import modicio.core.values.ConcreteValue
 
 import javax.inject.{Inject, Singleton}
-import modules.model.formdata.{NewAttributeRuleForm, NewConcreteValueRuleForm, NewExtensionRuleForm, NewFragmentForm, NewLinkRuleForm}
+import modules.model.formdata.{NewAttributeRuleForm, NewConcreteValueRuleForm, NewExtensionRuleForm, NewFragmentForm, NewLinkRuleForm, StringSelectionForm}
 import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc._
@@ -51,8 +51,10 @@ class ModelController @Inject()(cc: ControllerComponents) extends
           typeHandle <- typeOption.get.unfold()
           hasSingleton <- typeHandle.hasSingleton
           hasSingletonRoot <- typeHandle.hasSingletonRoot
+          allTypes <- registry.getTypes
+          allVariants <- registry.getVariants
         } yield {
-          Ok(views.html.pages.fragment_details(typeHandle, hasSingleton, hasSingletonRoot))
+          Ok(views.html.pages.fragment_details(typeHandle, allTypes.toSeq, allVariants.map(_._1), hasSingleton, hasSingletonRoot))
         }
       })
     })
@@ -168,6 +170,24 @@ class ModelController @Inject()(cc: ControllerComponents) extends
               if (newRule.verify()) {
                 typeHandle.applyRule(newRule)
               }
+              Redirect(routes.ModelController.fragment(name, identity))
+            })
+          })
+        })
+      })
+  }
+
+  def addSlot(name: String, identity: String, ruleId: String): Action[AnyContent] = Action.async { implicit request: Request[AnyContent] =>
+    StringSelectionForm.form.bindFromRequest fold(
+      errorForm => {
+        Future.successful(Redirect(routes.ModelController.fragment(name, identity)))
+      },
+      data => {
+        RegistryProvider.getRegistry flatMap (registry => {
+          registry.getType(name, identity) flatMap (typeOption => {
+            typeOption.getOrElse(throw new Exception()).unfold() map (typeHandle => {
+              val variantTime = data.selection
+              //TODO
               Redirect(routes.ModelController.fragment(name, identity))
             })
           })
