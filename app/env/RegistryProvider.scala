@@ -48,7 +48,7 @@ object RegistryProvider {
     typeFactory.setRegistry(registry.get)
     instanceFactory.setRegistry(registry.get)
 
-    val source = Source.fromFile("resources/json_hybrid_rule_example.json")
+    val source = Source.fromFile("resources/project_example.json")
     val fileContents = source.getLines.mkString
     println(fileContents)
     source.close()
