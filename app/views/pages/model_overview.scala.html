@@ -17,10 +17,27 @@
 * *@
 @import views.html.forms.new_fragment_form
 @import modicio.core.TypeHandle
-@(types: Seq[TypeHandle])(implicit request: RequestHeader, messagesProvider: MessagesProvider)
+@import modicio.core.TimeIdentity
+@import views.html.helper.CSRF
+@(types: Seq[TypeHandle], rootTime: TimeIdentity)(implicit request: RequestHeader, messagesProvider: MessagesProvider)
 
 @app{
-
+    <div class="full-width card shadowed m-b-small">
+        <div class="p-t-small p-b-small p-r-medium p-l-medium">
+            <div class="flex-container bg-block-1 m-t-mini p-ltrb-mini">
+                <div class="col-2"><b>Variant</b></div><div class="weight-2">@TimeIdentity.prettyPrintExtended(rootTime.variantTime)</div>
+            </div>
+            <div class="flex-container bg-block-1 m-t-mini p-ltrb-mini">
+                <div class="col-2"><b>Running</b></div><div class="weight-2">@TimeIdentity.prettyPrintExtended(rootTime.runningTime)</div>
+            </div>
+            <div class="m-t-small">
+            @helper.form(action = routes.ModelController.incrementVariant()) {
+                @CSRF.formField
+                <button class="btn btn-bordered-prim btn-large">Increment Variant</button>
+            }
+            </div>
+        </div>
+    </div>
     <div class="full-width card shadowed m-b-small">
         <div class="p-t-small p-b-small p-r-medium p-l-medium">
             <div class="headline-text m-b-small"><b>Template Type-Fragments</b></div>

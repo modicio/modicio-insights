@@ -33,6 +33,8 @@ GET         /model/fragment/:name                                   controllers.
 # Add a new Fragment with some predefined values but EMPTY RULESETS
 POST        /model/fragment                                         controllers.ModelController.addModelElement()
 
+POST        /model/variant                                          controllers.ModelController.incrementVariant()
+
 POST        /model/fragment/:name/singleton/add                     controllers.ModelController.updateSingleton(name: String, identity: String)
 
 # Add a new rule to the HEAD fragment

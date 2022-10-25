@@ -40,7 +40,8 @@ class ModelController @Inject()(cc: ControllerComponents) extends
 
   def index: Action[AnyContent] = Action.async { implicit request: Request[AnyContent] =>
     RegistryProvider.getRegistry flatMap (registry => {
-      registry.getReferences map (references => Ok(views.html.pages.model_overview(references.toSeq)))
+      registry.getReferences map (references => Ok(views.html.pages.model_overview(references.toSeq,
+        references.find(_.getTypeName == ModelElement.ROOT_NAME).get.getTimeIdentity)))
     })
   }
 
@@ -214,6 +215,11 @@ class ModelController @Inject()(cc: ControllerComponents) extends
         })
       })
     })
+  }
+
+  def incrementVariant(): Action[AnyContent] = Action.async { implicit request: Request[AnyContent] =>
+    RegistryProvider.getRegistry flatMap (registry =>
+      registry.incrementVariant map (_ => Redirect(routes.ModelController.index())))
   }
 
 
