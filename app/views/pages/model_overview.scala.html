@@ -15,7 +15,7 @@
 * You should have received a copy of the GNU General Public License
 * along with this program. If not, see <https://www.gnu.org/licenses/>.
 * *@
-@import views.html.forms.new_fragment_form
+@import views.html.forms.new_model_element_form
 @import modicio.core.TypeHandle
 @import modicio.core.TimeIdentity
 @import views.html.helper.CSRF
@@ -40,7 +40,7 @@
     </div>
     <div class="full-width card shadowed m-b-small">
         <div class="p-t-small p-b-small p-r-medium p-l-medium">
-            <div class="headline-text m-b-small"><b>Template Type-Fragments</b></div>
+            <div class="headline-text m-b-small"><b>Abstract Model Classes</b></div>
                 <div class="flex-container full-width stretched horizontal m-b-mini bg-sec fc-white p-t-mini p-b-mini">
                     <div class="m-l-small col-2"><b>Name</b></div>
                     <div class="weight-2"><b>Identity</b></div>
@@ -49,7 +49,7 @@
                 @for(handle <- types.filter(f => f.getIsTemplate)){
                     <div class="flex-container full-width stretched horizontal m-t-mini p-t-mini p-b-mini bg-lg">
                         <div class="m-l-small col-2">@handle.getTypeName</div>
-                        <div class="weight-2"><b>[HEAD]</b></div>
+                        <div class="weight-2"><b>[REFERENCE (#)]</b></div>
                         <div class="widget-large m-l-small m-r-small"><a href='@routes.ModelController.fragment(handle.getTypeName, "#")'>open</a></div>
                     </div>
                 }
@@ -58,7 +58,7 @@
 
     <div class="full-width card shadowed m-b-small">
         <div class="p-t-small p-b-small p-r-medium p-l-medium">
-            <div class="headline-text m-b-small"><b>Instantiable Type-Fragments</b></div>
+            <div class="headline-text m-b-small"><b>Instantiable Model Classes</b></div>
             <div class="flex-container full-width stretched horizontal m-b-mini bg-sec fc-white p-t-mini p-b-mini">
                 <div class="m-l-small col-2"><b>Name</b></div>
                 <div class="weight-2"><b>Version</b></div>
@@ -67,7 +67,7 @@
             @for(handle <- types.filter(f => !f.getIsTemplate)){
                 <div class="flex-container full-width stretched horizontal m-t-mini p-t-mini p-b-mini bg-lg">
                     <div class="m-l-small col-2">@handle.getTypeName</div>
-                    <div class="weight-2"><b>[HEAD]</b></div>
+                    <div class="weight-2"><b>[REFERENCE (#)]</b></div>
                     <div class="widget-large m-l-small m-r-small"><a href='@routes.ModelController.fragment(handle.getTypeName, "#")'>open</a></div>
                 </div>
             }
@@ -76,8 +76,8 @@
 
     <div class="full-width card shadowed m-b-small">
         <div class="p-t-small p-b-small p-r-medium p-l-medium">
-            <div class="headline-text m-b-small"><b>New Fragment</b></div>
-            @new_fragment_form()
+            <div class="headline-text m-b-small"><b>New Model Class</b></div>
+            @new_model_element_form()
         </div>
     </div>
 }("Model Overview")

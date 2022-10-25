@@ -40,10 +40,10 @@ class InstanceController @Inject()(cc: ControllerComponents) extends
     RegistryProvider.getRegistry flatMap (registry => {
       registry.getReferences flatMap (references => {
         if (selection.isBlank) {
-            Future.successful(Ok(views.html.pages.simple_instance_overview(references.toSeq, "", Seq())))
+            Future.successful(Ok(views.html.pages.instance_overview(references.toSeq, "", Seq())))
         } else {
           registry.getAll(selection) map (deepInstances => {
-            Ok(views.html.pages.simple_instance_overview(references.toSeq, selection, deepInstances.toSeq))
+            Ok(views.html.pages.instance_overview(references.toSeq, selection, deepInstances.toSeq))
           })
         }
       })
@@ -77,7 +77,7 @@ class InstanceController @Inject()(cc: ControllerComponents) extends
                 instance.get.unfold()))) map (associatedInstances => {
             val associationData = deepInstance.getDeepAssociations
             val associationMap = associationData.map(data => (data, associatedInstances.find(_.getInstanceId == data.targetInstanceId).get))
-              Ok(views.html.pages.simple_instance_details(selection, deepInstance, associationMap))
+              Ok(views.html.pages.instance_details(selection, deepInstance, associationMap))
           })
         })
       })

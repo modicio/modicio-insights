@@ -22,10 +22,10 @@
 <div>
     <div class="flex-container">
         <div class="weight-2 flex-container">
-            <div class="bg-sec fc-white p-ltrb-mini">relationName: @rule.associationName</div>
-            <div class="m-l-mini bg-sec fc-white p-ltrb-mini">targetName: @rule.targetName</div>
-            <div class="m-l-mini bg-sec fc-white p-ltrb-mini">multiplicity: @rule.multiplicity</div>
-            <div class="m-l-mini bg-prim p-ltrb-mini"><a class="fc-white" href='@routes.ModelController.fragment(rule.targetName, "#")'>open</a></div>
+            <div class="bg-sec fc-white p-ltrb-mini">Relation Name: @rule.associationName</div>
+            <div class="m-l-mini bg-sec fc-white p-ltrb-mini">Target Class: @rule.targetName</div>
+            <div class="m-l-mini bg-sec fc-white p-ltrb-mini">Multiplicity: @rule.multiplicity</div>
+            <div class="m-l-mini bg-prim p-ltrb-mini"><a class="fc-white" href='@routes.ModelController.fragment(rule.targetName, "#")'>Open</a></div>
         </div>
     </div>
     @for(slot <- rule.getInterface.getSlots){
