@@ -42,6 +42,7 @@ POST        /model/fragment/:name/rules/attribute_new               controllers.
 POST        /model/fragment/:name/rules/value_new                   controllers.ModelController.addConcreteValueRule(name: String, identity: String)
 
 POST        /model/fragment/:name/rules/:ruleId/slot_new            controllers.ModelController.addSlot(name: String, identity: String, ruleId: String)
+POST        /model/fragment/:name/rules/:ruleId/slot_delete         controllers.ModelController.removeSlot(name: String, identity: String, ruleId: String, variantTime: Long)
 
 # Delete a rule from the HEAD fragment
 POST        /model/fragment/:name/rules/:ruleId/delete              controllers.ModelController.removeRule(name: String, identity: String, ruleId: String)

@@ -87,14 +87,15 @@
             <div class="col-2"><b>links</b></div><div class="weight-2">[ ]</div>
         }else{
             <b>links</b>
-            <div class="m-l-medium m-t-mini">
+            <div class="m-l-mini m-t-mini">
             @for(associationRule <- typeHandle.iterator.get.get.getAssociationRules) {
-                <div class="m-t-mini"></div>
-                @association_rule_view(associationRule)
-                @new_slot_form(associationRule.id, typeHandle, allVariants)
-                @if(!hasSingleton){
-                    @delete_rule_form(typeHandle.getTypeName, typeHandle.getTypeIdentity, associationRule.id)
-                }
+                <div class="m-t-mini card m-ltrb-mini p-ltrb-small shadowed">
+                    @association_rule_view(associationRule, typeHandle.getTypeName, typeHandle.getTypeIdentity)
+                    @new_slot_form(associationRule.id, typeHandle, allVariants)
+                    @if(!hasSingleton){
+                        @delete_rule_form(typeHandle.getTypeName, typeHandle.getTypeIdentity, associationRule.id)
+                    }
+                </div>
             }
             </div>
         }

@@ -187,7 +187,7 @@ class ModelController @Inject()(cc: ControllerComponents) extends
           registry.getType(name, identity) flatMap (typeOption => {
             typeOption.getOrElse(throw new Exception()).unfold() map (typeHandle => {
               val variantTime = data.selection.toLong
-              typeHandle.applySlot()
+              typeHandle.applySlot(ruleId, variantTime)
               Redirect(routes.ModelController.fragment(name, identity))
             })
           })
@@ -195,6 +195,16 @@ class ModelController @Inject()(cc: ControllerComponents) extends
       })
   }
 
+  def removeSlot(name: String, identity: String, ruleId: String, variantTime: Long): Action[AnyContent] = Action.async { implicit request: Request[AnyContent] =>
+    RegistryProvider.getRegistry flatMap (registry => {
+          registry.getType(name, identity) flatMap (typeOption => {
+            typeOption.getOrElse(throw new Exception()).unfold() map (typeHandle => {
+              typeHandle.removeSlot(ruleId, variantTime)
+              Redirect(routes.ModelController.fragment(name, identity))
+            })
+          })
+        })
+  }
   def removeRule(name: String, identity: String, ruleId: String): Action[AnyContent] = Action.async { implicit request: Request[AnyContent] =>
     RegistryProvider.getRegistry flatMap (registry => {
       registry.getType(name, identity) flatMap (typeOption => {
@@ -205,5 +215,6 @@ class ModelController @Inject()(cc: ControllerComponents) extends
       })
     })
   }
+
 
 }
