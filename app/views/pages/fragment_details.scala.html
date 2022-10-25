@@ -28,7 +28,7 @@
 @import views.html.forms.new_value_rule_form
 @import views.html.forms.new_slot_form
 @import modicio.core.TimeIdentity
-@(typeHandle: TypeHandle, allTypes: Seq[String], allVariants: Seq[Long], hasSingleton: Boolean, hasSingletonRoot: Boolean)(implicit request: RequestHeader, messagesProvider: MessagesProvider)
+@(typeHandle: TypeHandle, allTypes: Seq[String], allVariants: Seq[((Long, String), Int)], hasSingleton: Boolean, hasSingletonRoot: Boolean)(implicit request: RequestHeader, messagesProvider: MessagesProvider)
 
 @app{
     <div>

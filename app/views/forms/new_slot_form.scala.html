@@ -18,7 +18,7 @@
 @import views.html.helper.CSRF
 @import modicio.core.TypeHandle
 @import modicio.core.TimeIdentity
-@(associationId: String, parentHandle: TypeHandle, variants: Seq[Long])(implicit request: RequestHeader, messagesProvider: MessagesProvider)
+@(associationId: String, parentHandle: TypeHandle, variants: Seq[((Long, String), Int)])(implicit request: RequestHeader, messagesProvider: MessagesProvider)
 
 @helper.form(action = routes.ModelController.addSlot(parentHandle.getTypeName, parentHandle.getTypeIdentity, associationId)) {
     @CSRF.formField
@@ -28,8 +28,8 @@
             <select class="input-large" name="selection">
                 <option selected="selected">select</option>
                 @for(variant <- variants) {
-                    <option value="@variant">
-                        @TimeIdentity.prettyPrint(variant)
+                    <option value="@variant._1._1">
+                        @TimeIdentity.prettyPrint(variant._1._1) (covering currently @variant._2 known hooks)
                     </option>
                 }
             </select>
