@@ -20,7 +20,7 @@ package controllers
 
 import env.RegistryProvider
 import modicio.core.ModelElement
-import modicio.core.rules.{AssociationRule, AttributeRule, ConnectionInterface, ParentRelationRule}
+import modicio.core.rules.{AssociationRule, AttributeRule, ConnectionInterface, ParentRelationRule, Slot}
 import modicio.core.values.ConcreteValue
 
 import javax.inject.{Inject, Singleton}
@@ -166,7 +166,7 @@ class ModelController @Inject()(cc: ControllerComponents) extends
         RegistryProvider.getRegistry flatMap (registry => {
           registry.getType(name, identity) flatMap (typeOption => {
             typeOption.getOrElse(throw new Exception()).unfold() map (typeHandle => {
-              val connectionInterface = new ConnectionInterface(mutable.Set())
+              val connectionInterface = new ConnectionInterface(mutable.Buffer[Slot]())
               val newRule = AssociationRule.create(data.linkName, data.targetName, data.multiplicity, connectionInterface)
               if (newRule.verify()) {
                 typeHandle.applyRule(newRule)
