@@ -15,39 +15,49 @@
 * You should have received a copy of the GNU General Public License
 * along with this program. If not, see <https://www.gnu.org/licenses/>.
 * *@
-@import views.html.components.property_rule_view
-@import views.html.components.extension_rule_view
+@import modicio.core.TypeHandle
+@import views.html.components.attribute_rule_view
+@import views.html.components.parent_relation_rule_view
 @import views.html.components.association_rule_view
 @import views.html.forms.delete_rule_form
-@import views.html.forms.new_extension_rule_form
-@import views.html.forms.new_link_rule_form
+@import views.html.forms.new_parent_relation_rule_form
+@import views.html.forms.new_association_rule_form
 @import views.html.forms.new_attribute_rule_form
 @import views.html.forms.update_singleton_form
 @import views.html.components.value_rule_view
 @import views.html.forms.new_value_rule_form
-@import modicio.codi.TypeHandle
-@(typeHandle: TypeHandle, hasSingleton: Boolean, hasSingletonRoot: Boolean)(implicit request: RequestHeader, messagesProvider: MessagesProvider)
+@import views.html.forms.new_slot_form
+@import modicio.core.TimeIdentity
+@(typeHandle: TypeHandle, allTypes: Seq[String], allVariants: Seq[((Long, String), Int)], hasSingleton: Boolean, hasSingletonRoot: Boolean)(implicit request: RequestHeader, messagesProvider: MessagesProvider)
 
 @app{
     <div>
 
         <div class="flex-container bg-block-1 m-t-mini p-ltrb-mini">
-            <div class="col-2"><b>name</b></div><div class="weight-2">@{typeHandle.getTypeIdentity.takeRight(5)+":"+typeHandle.getTypeName}</div>
+            <div class="col-2"><b>Name</b></div><div class="weight-2">@{typeHandle.getTypeIdentity.takeRight(5)+":"+typeHandle.getTypeName}</div>
         </div>
-
         <div class="flex-container bg-block-1 m-t-mini p-ltrb-mini">
-            <div class="col-2"><b>template</b></div><div class="weight-2">@typeHandle.getIsTemplate</div>
+            <div class="col-2"><b>isAbstract</b></div><div class="weight-2">@typeHandle.getIsTemplate</div>
+        </div>
+        <div class="flex-container bg-block-1 m-t-mini p-ltrb-mini">
+            <div class="col-2"><b>Variant</b></div><div class="weight-2">@TimeIdentity.prettyPrintExtended(typeHandle.getTimeIdentity.variantTime)</div>
+        </div>
+        <div class="flex-container bg-block-1 m-t-mini p-ltrb-mini">
+            <div class="col-2"><b>Version</b></div><div class="weight-2">@TimeIdentity.prettyPrintExtended(typeHandle.getTimeIdentity.versionTime)</div>
+        </div>
+        <div class="flex-container bg-block-1 m-t-mini p-ltrb-mini">
+            <div class="col-2"><b>Running</b></div><div class="weight-2">@TimeIdentity.prettyPrintExtended(typeHandle.getTimeIdentity.runningTime)</div>
         </div>
 
         <div class="bg-block-1 m-t-mini p-ltrb-mini">
-            @if(typeHandle.iterator.get.get.getExtensionRules.isEmpty){
-                <div class="col-2"><b>childOf</b></div><div class="weight-2">[ ] ROOT ENTITY</div>
+            @if(typeHandle.iterator.get.get.getParentRelationRules.isEmpty){
+                <div class="col-2"><b>Parent Relation Rules</b></div><div class="weight-2">[ ]</div>
             }else{
-                <b>childOf</b>
+                <b>Parent Relation Rules</b>
                 <div class="m-l-medium m-t-mini">
-                @for(extensionRule <- typeHandle.iterator.get.get.getExtensionRules){
+                @for(extensionRule <- typeHandle.iterator.get.get.getParentRelationRules){
                     <div class="m-t-medium"></div>
-                    @extension_rule_view(extensionRule)
+                    @parent_relation_rule_view(extensionRule)
                     @if(!hasSingleton) {
                         @delete_rule_form(typeHandle.getTypeName, typeHandle.getTypeIdentity, extensionRule.id)
                     }
@@ -58,13 +68,13 @@
 
         <div class="bg-block-1 m-t-mini p-ltrb-mini">
             @if(typeHandle.iterator.get.get.getAttributeRules.isEmpty){
-                <div class="col-2"><b>attributes</b></div><div class="weight-2">[ ]</div>
+                <div class="col-2"><b>Attribute Rules</b></div><div class="weight-2">[ ]</div>
             }else {
-                <b>attributes</b>
+                <b>Attribute Rules</b>
                 <div class="m-l-medium m-t-mini">
                 @for(propertyRule <- typeHandle.iterator.get.get.getAttributeRules) {
                     <div class="m-t-medium"></div>
-                    @property_rule_view(propertyRule)
+                    @attribute_rule_view(propertyRule)
                     @if(!hasSingleton) {
                         @delete_rule_form(typeHandle.getTypeName, typeHandle.getTypeIdentity, propertyRule.id)
                     }
@@ -74,25 +84,27 @@
         </div>
         <div class="bg-block-1 m-t-small p-ltrb-mini">
         @if(typeHandle.iterator.get.get.getAssociationRules.isEmpty){
-            <div class="col-2"><b>links</b></div><div class="weight-2">[ ]</div>
+            <div class="col-2"><b>Association Rules</b></div><div class="weight-2">[ ]</div>
         }else{
-            <b>links</b>
-            <div class="m-l-medium m-t-mini">
+            <b>Association Rules</b>
+            <div class="m-l-mini m-t-mini">
             @for(associationRule <- typeHandle.iterator.get.get.getAssociationRules) {
-                <div class="m-t-mini"></div>
-                @association_rule_view(associationRule)
-                @if(!hasSingleton){
-                    @delete_rule_form(typeHandle.getTypeName, typeHandle.getTypeIdentity, associationRule.id)
-                }
+                <div class="m-t-mini card m-ltrb-mini p-ltrb-small shadowed">
+                    @association_rule_view(associationRule, typeHandle.getTypeName, typeHandle.getTypeIdentity)
+                    @new_slot_form(associationRule.id, typeHandle, allVariants)
+                    @if(!hasSingleton){
+                        @delete_rule_form(typeHandle.getTypeName, typeHandle.getTypeIdentity, associationRule.id)
+                    }
+                </div>
             }
             </div>
         }
         </div>
         <div class="bg-block-1 m-t-small p-ltrb-mini">
         @if(typeHandle.iterator.get.get.getConcreteValues.isEmpty){
-            <div class="col-2"><b>values</b></div><div class="weight-2">[ ]</div>
+            <div class="col-2"><b>Concrete Value Rules</b></div><div class="weight-2">[ ]</div>
         }else{
-            <b>values</b>
+            <b>Concrete Value Rules</b>
             <div class="m-l-medium m-t-mini">
             @for(concreteValue <- typeHandle.iterator.get.get.getConcreteValues) {
                 <div class="m-t-mini"></div>
@@ -108,36 +120,37 @@
 
     @if(typeHandle.isConcrete) {
         <div class="full-width card shadowed m-b-small m-t-medium">
-            <p></p>
-            @if(hasSingletonRoot){
-                <p>This model is part of a fully specified singleton instance and thus immutable</p>
-                <p>You may create a new mutable child of this model-element for modification.</p>
-            }else{
-                <p>This model-element has no degrees of freedom!</p>
-                <p>Mark as singleton-instance? This model and its hierarchy will become immutable afterwards.</p>
-                @update_singleton_form(typeHandle.getTypeName, typeHandle.getTypeIdentity, "Create")
-            }
+            <div class="p-t-small p-b-small p-r-medium p-l-medium">
+                @if(hasSingletonRoot){
+                    <p>This model element is part of a fully specified singleton instance and thus immutable</p>
+                    <p>You may create a new mutable child of this model element for modification.</p>
+                }else{
+                    <p>This model element has no degrees of freedom!</p>
+                    <p>Mark as singleton instance? This model and its hierarchy will become immutable afterwards.</p>
+                    @update_singleton_form(typeHandle.getTypeName, typeHandle.getTypeIdentity, "Create")
+                }
+            </div>
         </div>
     }else{
         @if(hasSingleton){
             <div class="full-width card shadowed m-b-small m-t-medium">
                 <p>This model is part of a fully specified singleton instance and thus immutable</p>
-                <p>You may create a new mutable child of this model-element for modification.</p>
+                <p>You may create a new mutable child of this model element for modification.</p>
             </div>
         }
     }
     @if(!hasSingleton) {
         <div class="full-width card shadowed m-b-small m-t-medium">
             <div class="p-t-small p-b-small p-r-medium p-l-medium">
-                <div class="headline-text m-b-small"><b>New CHILD OF Rule</b></div>
-                @new_extension_rule_form(typeHandle.getTypeName, typeHandle.getTypeIdentity)
+                <div class="headline-text m-b-small"><b>New PARENT RELATION Rule</b></div>
+                @new_parent_relation_rule_form(typeHandle.getTypeName, typeHandle.getTypeIdentity)
             </div>
         </div>
 
         <div class="full-width card shadowed m-b-small m-t-medium">
             <div class="p-t-small p-b-small p-r-medium p-l-medium">
-                <div class="headline-text m-b-small"><b>New LINK Rule</b></div>
-                @new_link_rule_form(typeHandle.getTypeName, typeHandle.getTypeIdentity)
+                <div class="headline-text m-b-small"><b>New ASSOCIATION Rule</b></div>
+                @new_association_rule_form(typeHandle.getTypeName, typeHandle.getTypeIdentity, allTypes)
             </div>
         </div>
 
@@ -156,4 +169,4 @@
         </div>
     }
 
-}("Definition : "+typeHandle.getTypeName)
+}("Model Class : "+typeHandle.getTypeName)

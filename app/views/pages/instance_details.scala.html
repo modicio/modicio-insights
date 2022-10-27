@@ -17,94 +17,78 @@
 * *@
 @import views.html.forms.update_attribute_form
 @import views.html.forms.new_association_form
-@import modicio.codi.DeepInstance
-@(selection: String, instance: DeepInstance, associatedInstances: Set[DeepInstance])(implicit request: RequestHeader, messagesProvider: MessagesProvider)
+@import modicio.core.DeepInstance
+@import modicio.core.datamappings.AssociationData
+@(selection: String, instance: DeepInstance, associatedInstances: Set[(AssociationData, DeepInstance)])(implicit request: RequestHeader, messagesProvider: MessagesProvider)
 
 @app {
-    <div class="full-width card shadowed m-b-small m-t-medium">
-        <div class="p-t-small p-b-small p-r-medium p-l-medium">
-            <div class="flex-container full-width stretched horizontal m-b-mini bg-sec fc-white p-t-mini p-b-mini">
-                <div class="m-l-small col-2"><b>hasType</b></div>
-                <div class="weight-2"><b>Identity</b></div>
-                <div class="widget-medium m-r-small"><b>isValid</b></div>
-            </div>
-            <div class="flex-container full-width stretched horizontal m-t-mini p-t-mini p-b-mini bg-lg">
-                <div class="m-l-small col-2">@instance.getTypeHandle.getTypeName</div>
-                <div class="weight-2"><b>...@instance.getTypeHandle.getTypeIdentity.takeRight(5)</b></div>
-                <div class="widget-medium m-r-small">false</div>
-            </div>
-        </div>
-
-        <div class="m-l-medium m-r-small">
-            <strong>Polymorph Types:</strong> @for(typeValue <- instance.getTypeClosure){
-                <span class="p-ltrb-mini bg-sec fc-white">@typeValue</span>
-            }
-        </div>
-
-        <div class="m-l-medium m-r-small m-t-medium">
-            <strong>Can Associate:</strong> @for(typeValue <- instance.deepAssociationRuleMap.keySet){
-            <span class="p-ltrb-mini bg-sec fc-white">&#60;= @typeValue</span>
-        }
-        </div>
-
-        <div class="m-l-medium m-r-small m-t-medium">
-            <strong>InstanceID:</strong> <span id="pureid" class="p-ltrb-mini">@instance.getInstanceId</span> <button onclick="copyId('pureid')">copy</button>
-        </div>
-        <div class="m-l-medium m-r-small m-t-medium">
-            <strong>ExtendedInstanceID:</strong> <span id="extid" class="p-ltrb-mini">@instance.getTypeHandle.getTypeName:@instance.getInstanceId</span> <button onclick="copyId('extid')">copy</button>
-        </div>
-
-        <script>
-                function copyId(target) {
-                    const copyText = document.getElementById(target).textContent;
-                    navigator.clipboard.writeText(copyText);
-                    //alert("Copied the text: " + copyText);
+    <div class="full-width flex-container vertical centered">
+    <div class="col-7 card shadowed m-b-small m-t-medium p-ltrb-small">
+            <a target="blank" href="@routes.InstanceController.getInstanceNative(selection, instance.getInstanceId)">View Native Model</a>
+            <div class="m-l-medium m-r-small m-t-small">
+                <strong>This instance is a...</strong> @for(typeValue <- instance.getTypeClosure){
+                    <span class="p-ltrb-mini bg-sec fc-white">@typeValue</span>
                 }
-        </script>
+            </div>
+            <div class="m-l-medium m-r-small m-t-medium">
+                <strong>This instance can be associated with...</strong> @for(typeValue <- instance.deepAssociationRuleMap.keySet){
+                <span class="p-ltrb-mini bg-sec fc-white">&#60;= @typeValue</span>
+            }
+            </div>
+            <div class="m-l-medium m-r-small m-t-medium">
+                 <span hidden id="extid" class="p-ltrb-mini">@instance.getTypeHandle.getTypeName:@instance.getInstanceId</span> <button onclick="copyId('extid')">Copy ID Link</button>
+            </div>
 
-        <div class="widget-large m-l-medium m-r-small"><a href='@routes.ModelController.fragment(instance.getTypeHandle.getTypeName, instance.getTypeHandle.getTypeIdentity)'>
-            <button class="btn btn-solid-prim btn-medium m-t-small m-b-small">Model Insights</button>
-        </a></div>
-
+            <script>
+                    function copyId(target) {
+                        const copyText = document.getElementById(target).textContent;
+                        navigator.clipboard.writeText(copyText);
+                        //alert("Copied the text: " + copyText);
+                    }
+            </script>
     </div>
 
-    <div class="full-width card shadowed m-b-small m-t-medium">
+    <div class="col-7 card shadowed m-b-small m-t-medium p-l-small p-r-small">
         <div class="p-t-small p-b-small p-r-medium p-l-medium">
-            <div class="headline-text m-b-small"><b>Deep Attribute-Model</b></div>
+            <div class="headline-text m-b-small"><b>Data</b></div>
             <div class="flex-container full-width stretched horizontal m-b-mini bg-sec fc-white p-t-mini p-b-mini">
-                <div class="m-l-small col-3"><b>Native Rule</b></div>
-                <div class="weight-2"><b>Value</b></div>
+                <div class="m-l-small col-2"><b>Name</b></div>
+                <div class="m-l-small col-2"><b>Obligatory</b></div>
+                <div class="weight-2"><b>Datatype</b></div>
             </div>
             @for((prop, rule) <- instance.deepAttributeMap()) {
                 <div class="flex-container full-width stretched horizontal m-t-mini p-t-mini p-b-mini bg-lg">
-                    <div class="m-l-small col-3">@rule.serialiseSimple()</div>
-                    <div class="weight-2">@update_attribute_form(prop, rule, routes.InstanceController.updateAttribute(selection, instance.getInstanceId, prop.key, simple=false), None)</div>
+                    <div class="m-l-small col-2">@rule.name</div>
+                    <div class="m-l-small col-2">@rule.nonEmpty</div>
+                    <div class="weight-2">@update_attribute_form(prop, rule, routes.InstanceController.updateAttribute(selection, instance.getInstanceId, prop.key), None)</div>
                 </div>
             }
         </div>
     </div>
 
-    <div class="full-width card shadowed m-b-small m-t-medium">
+    <div class="col-7 card shadowed m-b-small m-t-medium p-l-small p-r-small">
         <div class="p-t-small p-b-small p-r-medium p-l-medium">
             <div class="headline-text m-b-small"><b>Associations</b></div>
             @if(instance.getDeepAssociations.nonEmpty){
                         <div class="flex-container full-width stretched horizontal m-b-mini bg-sec fc-white p-t-mini p-b-mini">
                             <div class="m-l-small col-2"><b>Relation</b></div>
                             <div class="m-l-small col-2"><b>hasType</b></div>
-                            <div class="m-l-small m-r-small input-medium"><b>InstanceID</b></div>
-                            <div class="weight-2"><b>Title (if attribute)</b></div>
+                            <div class="weight-2"><b>Title</b></div>
                             <div class="m-l-medium m-r-small">Action</div>
                         </div>
-                        @for(association <- instance.getAssociations){
-                            @defining(associatedInstances.find(_.getInstanceId == association.targetInstanceId).get){aInstance =>
+                        @for(association <- associatedInstances){
                                 <div class="flex-container full-width stretched horizontal m-t-mini p-t-mini p-b-mini bg-lg">
-                                    <div class="m-l-small col-2">@association.byRelation</div>
-                                    <div class="m-l-small col-2">@aInstance.getTypeHandle.getTypeName</div>
-                                    <div class="m-l-small m-r-small input-medium"><b>...@aInstance.getInstanceId.takeRight(5)</b></div>
-                                    <div class="weight-2">@aInstance.deepValue("Title").getOrElse("[untitled]")</div>
-                                    <div class="m-l-small m-r-small"><a href='@routes.InstanceController.getInstance(aInstance.getTypeHandle.getTypeName, aInstance.getInstanceId, simple=false)'>open</a></div>
+                                    <div class="m-l-small col-2">@association._1.byRelation</div>
+                                    @if(association._1.isFinal) {
+                                        <div class="m-l-small col-2">(final concept)</div>
+                                        <div class="weight-2"><b>@association._2.getTypeHandle.getTypeName</b></div>
+                                    }else{
+                                        <div class="m-l-small col-2">@association._2.getTypeHandle.getTypeName</div>
+                                        <div class="weight-2"><b>@association._2.deepValue("Title").getOrElse("[untitled]")</b></div>
+                                    }
+                                    <div class="m-l-small m-r-small"><a href='@routes.InstanceController.getInstance(association._2.getTypeHandle.getTypeName,association._2.getInstanceId)'>open</a></div>
                                 </div>
-                            }
+
                         }
             }else{
                 [Empty]
@@ -114,7 +98,7 @@
                     <div class="m-t-medium flex-container vertical">
                         <div><strong>@associationRule:</strong></div>
                         <div>
-                            @new_association_form(selection, associationRule, instance, instance.deepAssociationRuleMap(associationRule).toSet, simple=false)
+                            @new_association_form(selection, associationRule, instance, instance.deepAssociationRuleMap(associationRule).toSet)
                         </div>
                     </div>
 
@@ -122,5 +106,6 @@
             </div>
         </div>
     </div>
+    </div>
 
-}("Instance Details")
+}("Instance Details User-View")

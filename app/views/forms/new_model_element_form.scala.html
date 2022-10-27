@@ -16,28 +16,27 @@
 * along with this program. If not, see <https://www.gnu.org/licenses/>.
 * *@
 @import views.html.helper.CSRF
-@import modicio.core.DeepInstance
-@(selection: String, relation: String, parentInstance: DeepInstance, allowedTypes: Set[String])(implicit request: RequestHeader, messagesProvider: MessagesProvider)
 
-@helper.form(action = routes.InstanceController.addAssociation(selection, parentInstance.getInstanceId, relation)) {
+@()(implicit request: RequestHeader, messagesProvider: MessagesProvider)
+
+@helper.form(action = routes.ModelController.addModelElement()) {
     @CSRF.formField
     <div class="flex-container vertical">
         <div class="flex-container horizontal">
-            <label class="col-2">ID Link</label>
-            <input class="col-8" type="text" name="instanceId" value=""/>
+            <label class="col-2">Model Class Name</label>
+            <input class="col-8" type="text" name="fragmentName" value=""/>
         </div>
-            <div hidden class="flex-container horizontal m-t-mini">
-                <label class="col-2">AsType</label>
-                <select class="col-8" name="asType">
-                    <option selected="selected">associate as</option>
-                    @for(allowedType <- allowedTypes) {
-                        <option>
+        <div class="flex-container horizontal m-t-mini">
+            <label class="col-2">Model Class Type</label>
+            <select class="col-8" name="fragmentType">
+                <option selected="selected">select</option>
+                @for(allowedType <- Seq[String]("TEMPLATE", "INSTANTIABLE")) {
+                    <option>
                         @allowedType
-                        </option>
-                    }
-                </select>
-            </div>
+                    </option>
+                }
+            </select>
+        </div>
     </div>
     <button class="btn btn-solid-prim btn-small btn-shadowed m-t-small">Add</button>
-
 }

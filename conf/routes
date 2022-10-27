@@ -31,7 +31,9 @@ GET         /model                                                  controllers.
 # Show the details and rules of a specific Fragment
 GET         /model/fragment/:name                                   controllers.ModelController.fragment(name: String, identity: String)
 # Add a new Fragment with some predefined values but EMPTY RULESETS
-POST        /model/fragment                                         controllers.ModelController.addFragment()
+POST        /model/fragment                                         controllers.ModelController.addModelElement()
+
+POST        /model/variant                                          controllers.ModelController.incrementVariant()
 
 POST        /model/fragment/:name/singleton/add                     controllers.ModelController.updateSingleton(name: String, identity: String)
 
@@ -41,17 +43,20 @@ POST        /model/fragment/:name/rules/link_new                    controllers.
 POST        /model/fragment/:name/rules/attribute_new               controllers.ModelController.addAttributeRule(name: String, identity: String)
 POST        /model/fragment/:name/rules/value_new                   controllers.ModelController.addConcreteValueRule(name: String, identity: String)
 
+POST        /model/fragment/:name/rules/:ruleId/slot_new            controllers.ModelController.addSlot(name: String, identity: String, ruleId: String)
+POST        /model/fragment/:name/rules/:ruleId/slot_delete         controllers.ModelController.removeSlot(name: String, identity: String, ruleId: String, variantTime: Long)
+
 # Delete a rule from the HEAD fragment
 POST        /model/fragment/:name/rules/:ruleId/delete              controllers.ModelController.removeRule(name: String, identity: String, ruleId: String)
 
-GET         /instances                                              controllers.InstanceController.index(selection: String, simple: Boolean)
+GET         /instances                                              controllers.InstanceController.index(selection: String)
 
-POST        /instances/:selection                                   controllers.InstanceController.addInstance(selection: String, simple: Boolean)
+POST        /instances/:selection                                   controllers.InstanceController.addInstance(selection: String)
 
-GET         /instances/:selection/:instanceId                       controllers.InstanceController.getInstance(selection: String, instanceId: String, simple: Boolean)
+GET         /instances/:selection/:instanceId                       controllers.InstanceController.getInstance(selection: String, instanceId: String)
 
-GET         /instances/:selection/:instanceId/native                controllers.InstanceController.getInstanceNative(selection: String, instanceId: String, simple: Boolean)
+GET         /instances/:selection/:instanceId/native                controllers.InstanceController.getInstanceNative(selection: String, instanceId: String)
 
-POST        /instances/:selection/:instanceId/:attributeName        controllers.InstanceController.updateAttribute(selection: String, instanceId: String, attributeName: String, simple: Boolean)
+POST        /instances/:selection/:instanceId/:attributeName        controllers.InstanceController.updateAttribute(selection: String, instanceId: String, attributeName: String)
 
-POST        /instances/:selection/:instanceId                       controllers.InstanceController.addAssociation(selection: String, instanceId: String, relation: String, simple: Boolean)
+POST        /instances/:selection/:instanceId                       controllers.InstanceController.addAssociation(selection: String, instanceId: String, relation: String)

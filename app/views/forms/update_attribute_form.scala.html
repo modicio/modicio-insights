@@ -17,8 +17,8 @@
 * *@
 @import views.html.helper.CSRF
 @import views.html.components.message_box_error
-@import modicio.codi.datamappings.AttributeData
-@import modicio.codi.rules.AttributeRule
+@import modicio.core.rules.AttributeRule
+@import modicio.core.datamappings.AttributeData
 @(data: AttributeData, propertyRule: AttributeRule, updateAction: Call, msg: Option[String])(implicit request: RequestHeader, messagesProvider: MessagesProvider)
 
 @if(data.isFinal){

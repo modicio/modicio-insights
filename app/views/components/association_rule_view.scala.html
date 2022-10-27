@@ -15,15 +15,29 @@
 * You should have received a copy of the GNU General Public License
 * along with this program. If not, see <https://www.gnu.org/licenses/>.
 * *@
-@import modicio.codi.rules.AssociationRule
-@(rule: AssociationRule)
-
-<div class="flex-container">
-    <div class="bg-sec fc-white p-ltrb-mini">@rule.serialiseSimple()</div>
-    <div class="weight-2 flex-container">
-        <div class="m-l-medium bg-prim fc-white p-ltrb-mini">relationName: @rule.associationName</div>
-        <div class="m-l-mini bg-prim fc-white p-ltrb-mini">targetName: @rule.targetName</div>
-        <div class="m-l-mini bg-prim fc-white p-ltrb-mini">multiplicity: @rule.multiplicity</div>
-        <div class="m-l-mini bg-prim-dark p-ltrb-mini"><a class="fc-white" href='@routes.ModelController.fragment(rule.targetName, "#")'>open</a></div>
+@import modicio.core.rules.AssociationRule
+@import modicio.core.TimeIdentity
+@import views.html.helper.CSRF
+@(rule: AssociationRule, fragmentName: String, identity: String)(implicit request: RequestHeader, messagesProvider: MessagesProvider)
+<div>
+    <div class="flex-container">
+        <div class="weight-2 flex-container">
+            <div class="bg-sec fc-white p-ltrb-mini">Relation Name: @rule.associationName</div>
+            <div class="m-l-mini bg-sec fc-white p-ltrb-mini">Target Class: @rule.targetName</div>
+            <div class="m-l-mini bg-sec fc-white p-ltrb-mini">Multiplicity: @rule.multiplicity</div>
+            <div class="m-l-mini bg-prim p-ltrb-mini"><a class="fc-white" href='@routes.ModelController.fragment(rule.targetName, "#")'>Open</a></div>
+        </div>
     </div>
+    @for(slot <- rule.getInterface.getSlots){
+        <div class="flex-container m-t-mini">
+            <div class="bg-sec fc-white p-ltrb-mini"> [SLOT] @rule.targetName</div>
+            <div class="bg-prim fc-white p-ltrb-mini"> &#64; @TimeIdentity.prettyPrintExtended(slot.targetVariantTime)</div>
+            <div class="m-l-mini">
+                @helper.form(action = routes.ModelController.removeSlot(fragmentName, identity, rule.id, slot.targetVariantTime)) {
+                    @CSRF.formField
+                    <button class="btn btn-bordered-prim btn-small">Delete</button>
+                }
+            </div>
+        </div>
+    }
 </div>

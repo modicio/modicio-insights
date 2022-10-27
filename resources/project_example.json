@@ -1,15 +1,26 @@
 {
   "model": [
     {
+      "name": "#:NamedElement",
+      "template": true,
+      "childOf": [
+        ":#:ROOT"
+      ],
+      "associations": [],
+      "attributes": [],
+      "values": []
+    },
+    {
       "name": "#:ProjectItem",
       "template": true,
       "childOf": [
         ":#:NamedElement"
       ],
       "associations": [
-        ":partOf:Project:1"
+        ":partOf:Project:1:"
       ],
       "attributes": [
+        ":Title:STRING:true"
       ],
       "values": []
     },
@@ -20,7 +31,7 @@
         ":#:NamedElement"
       ],
       "associations": [
-        ":hasPart:ProjectItem:*"
+        ":hasPart:ProjectItem:*:"
       ],
       "attributes": [
         ":Responsible:STRING:true",
