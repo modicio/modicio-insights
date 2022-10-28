@@ -24,7 +24,7 @@
 @app {
     <div class="full-width flex-container vertical centered">
     <div class="col-7 card shadowed m-b-small m-t-medium p-ltrb-small">
-            <a target="blank" href="@routes.InstanceController.getInstanceNative(selection, instance.getInstanceId)">View Native Model</a>
+            <a target="blank" href="@routes.InstanceController.getInstanceNative(selection, instance.getInstanceId)">View Native ESI</a>
             <div class="m-l-medium m-r-small m-t-small">
                 <strong>This instance is a...</strong> @for(typeValue <- instance.getTypeClosure){
                     <span class="p-ltrb-mini bg-sec fc-white">@typeValue</span>

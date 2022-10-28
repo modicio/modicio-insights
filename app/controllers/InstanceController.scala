@@ -87,7 +87,7 @@ class InstanceController @Inject()(cc: ControllerComponents) extends
   def getInstanceNative(selection: String, instanceId: String): Action[AnyContent] = Action.async { implicit request: Request[AnyContent] =>
     RegistryProvider.getRegistry flatMap (registry => {
 
-      RegistryProvider.transformer.get.decompose(Some(instanceId)) map (data => {
+      RegistryProvider.transformer.get.decomposeInstance(instanceId) map (data => {
         val raw = NativeDSLParser.produceString(data)
 
         Ok(views.html.pages.instance_native(raw))
