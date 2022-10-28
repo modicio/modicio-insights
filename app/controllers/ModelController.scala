@@ -20,15 +20,15 @@ package controllers
 
 import env.RegistryProvider
 import modicio.core.ModelElement
-import modicio.core.rules.{AssociationRule, AttributeRule, ConnectionInterface, ParentRelationRule, Slot}
+import modicio.core.rules._
 import modicio.core.values.ConcreteValue
-
-import javax.inject.{Inject, Singleton}
-import modules.model.formdata.{NewAttributeRuleForm, NewConcreteValueRuleForm, NewExtensionRuleForm, NewFragmentForm, NewLinkRuleForm, StringSelectionForm}
+import modicio.nativelang.input.NativeDSLParser
+import modules.model.formdata._
 import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 
+import javax.inject.{Inject, Singleton}
 import scala.collection.mutable
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -42,6 +42,15 @@ class ModelController @Inject()(cc: ControllerComponents) extends
     RegistryProvider.getRegistry flatMap (registry => {
       registry.getReferences map (references => Ok(views.html.pages.model_overview(references.toSeq,
         references.find(_.getTypeName == ModelElement.ROOT_NAME).get.getTimeIdentity)))
+    })
+  }
+
+  def native(): Action[AnyContent] = Action.async { implicit request: Request[AnyContent] =>
+    RegistryProvider.getRegistry flatMap (registry => {
+      RegistryProvider.transformer.get.decomposeModel() map(nativeDSL => {
+       val nativeString = NativeDSLParser.produceString(nativeDSL)
+        Ok(views.html.pages.model_native(nativeString))
+      })
     })
   }
 
