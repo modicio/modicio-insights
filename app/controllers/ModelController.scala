@@ -112,12 +112,12 @@ class ModelController @Inject()(cc: ControllerComponents) extends
       data => {
         RegistryProvider.getRegistry flatMap (registry => {
           registry.getType(name, identity) flatMap (typeOption => {
-            typeOption.get.unfold() map (typeHandle => {
+            typeOption.get.unfold() flatMap (typeHandle => {
               val newRule = ParentRelationRule.create(data.parent, ModelElement.REFERENCE_IDENTITY)
               if (newRule.verify()) {
                 typeHandle.applyRule(newRule)
               }
-              Redirect(routes.ModelController.fragment(name, identity))
+              typeHandle.commit() map (_ => Redirect(routes.ModelController.fragment(name, identity)))
             })
           })
         })
@@ -132,13 +132,13 @@ class ModelController @Inject()(cc: ControllerComponents) extends
       data => {
         RegistryProvider.getRegistry flatMap (registry => {
           registry.getType(name, identity) flatMap (typeOption => {
-            typeOption.get.unfold() map (typeHandle => {
+            typeOption.get.unfold() flatMap (typeHandle => {
               val nonEmpty = data.nonEmpty == "true"
               val newRule = AttributeRule.create(data.attributeName, data.datatype, nonEmpty)
               if (newRule.verify()) {
                 typeHandle.applyRule(newRule)
               }
-              Redirect(routes.ModelController.fragment(name, identity))
+              typeHandle.commit() map (_ => Redirect(routes.ModelController.fragment(name, identity)))
             })
           })
         })
@@ -153,13 +153,13 @@ class ModelController @Inject()(cc: ControllerComponents) extends
       data => {
         RegistryProvider.getRegistry flatMap (registry => {
           registry.getType(name, identity) flatMap (typeOption => {
-            typeOption.get.unfold() map (typeHandle => {
+            typeOption.get.unfold() flatMap (typeHandle => {
               val isFinal = data.isFinal == "true"
               val newRule = ConcreteValue.create(data.valueType, data.valueName, (data.content + ":" + isFinal).split(":"))
               if (newRule.verify()) {
                 typeHandle.applyRule(newRule)
               }
-              Redirect(routes.ModelController.fragment(name, identity))
+              typeHandle.commit() map (_ => Redirect(routes.ModelController.fragment(name, identity)))
             })
           })
         })
@@ -174,13 +174,13 @@ class ModelController @Inject()(cc: ControllerComponents) extends
       data => {
         RegistryProvider.getRegistry flatMap (registry => {
           registry.getType(name, identity) flatMap (typeOption => {
-            typeOption.getOrElse(throw new Exception()).unfold() map (typeHandle => {
+            typeOption.getOrElse(throw new Exception()).unfold() flatMap (typeHandle => {
               val connectionInterface = new ConnectionInterface(mutable.Buffer[Slot]())
               val newRule = AssociationRule.create(data.linkName, data.targetName, data.multiplicity, connectionInterface)
               if (newRule.verify()) {
                 typeHandle.applyRule(newRule)
               }
-              Redirect(routes.ModelController.fragment(name, identity))
+              typeHandle.commit() map (_ => Redirect(routes.ModelController.fragment(name, identity)))
             })
           })
         })
@@ -195,10 +195,10 @@ class ModelController @Inject()(cc: ControllerComponents) extends
       data => {
         RegistryProvider.getRegistry flatMap (registry => {
           registry.getType(name, identity) flatMap (typeOption => {
-            typeOption.getOrElse(throw new Exception()).unfold() map (typeHandle => {
+            typeOption.getOrElse(throw new Exception()).unfold() flatMap  (typeHandle => {
               val variantTime = data.selection.toLong
               typeHandle.applySlot(ruleId, variantTime)
-              Redirect(routes.ModelController.fragment(name, identity))
+              typeHandle.commit() map (_ => Redirect(routes.ModelController.fragment(name, identity)))
             })
           })
         })
@@ -208,9 +208,9 @@ class ModelController @Inject()(cc: ControllerComponents) extends
   def removeSlot(name: String, identity: String, ruleId: String, variantTime: Long): Action[AnyContent] = Action.async { implicit request: Request[AnyContent] =>
     RegistryProvider.getRegistry flatMap (registry => {
           registry.getType(name, identity) flatMap (typeOption => {
-            typeOption.getOrElse(throw new Exception()).unfold() map (typeHandle => {
+            typeOption.getOrElse(throw new Exception()).unfold() flatMap (typeHandle => {
               typeHandle.removeSlot(ruleId, variantTime)
-              Redirect(routes.ModelController.fragment(name, identity))
+              typeHandle.commit() map (_ => Redirect(routes.ModelController.fragment(name, identity)))
             })
           })
         })
@@ -218,9 +218,9 @@ class ModelController @Inject()(cc: ControllerComponents) extends
   def removeRule(name: String, identity: String, ruleId: String): Action[AnyContent] = Action.async { implicit request: Request[AnyContent] =>
     RegistryProvider.getRegistry flatMap (registry => {
       registry.getType(name, identity) flatMap (typeOption => {
-        typeOption.get.unfold() map (typeHandle => {
+        typeOption.get.unfold() flatMap (typeHandle => {
           typeHandle.removeRule(ruleId)
-          Redirect(routes.ModelController.fragment(name, identity))
+          typeHandle.commit() map (_ => Redirect(routes.ModelController.fragment(name, identity)))
         })
       })
     })
