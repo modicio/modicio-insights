@@ -46,6 +46,10 @@
                             <div class="m-l-small m-r-small input-medium">@instance.getTypeHandle.getTypeIdentity.takeRight(5)</div>
                             <div class="weight-2"><b>@instance.deepValue("Title").getOrElse("[untitled]")</b></div>
                             <div class=" m-l-small m-r-small"><a href='@routes.InstanceController.getInstance(instance.getTypeHandle.getTypeName, instance.getInstanceId)'>open</a></div>
+                            @helper.form(action = routes.InstanceController.deleteInstance(selected, instance.getInstanceId)) {
+                                @CSRF.formField
+                                <button class="btn btn-bordered-prim btn-small  m-r-mini">Delete</button>
+                            }
                         </div>
                     }
             </div>

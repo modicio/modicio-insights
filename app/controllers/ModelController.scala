@@ -70,6 +70,16 @@ class ModelController @Inject()(cc: ControllerComponents) extends
     })
   }
 
+  def deleteFragment(name: String, identity: String): Action[AnyContent] = Action.async { implicit request: Request[AnyContent] =>
+    RegistryProvider.getRegistry flatMap (registry => {
+      if (name != ModelElement.ROOT_NAME) {
+        registry.autoRemove(name, identity) map (_ => Redirect(routes.ModelController.index()))
+      } else {
+        Future.successful(Redirect(routes.ModelController.index()))
+      }
+    })
+  }
+
   def updateSingleton(name: String, identity: String): Action[AnyContent] = Action.async { implicit request: Request[AnyContent] =>
     RegistryProvider.getRegistry flatMap (registry => {
       registry.getType(name, identity) flatMap (typeOption => {

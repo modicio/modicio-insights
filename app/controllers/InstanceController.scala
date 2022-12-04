@@ -84,6 +84,12 @@ class InstanceController @Inject()(cc: ControllerComponents) extends
     })
   }
 
+  def deleteInstance(selection: String, instanceId: String): Action[AnyContent] = Action.async { implicit request: Request[AnyContent] =>
+    RegistryProvider.getRegistry flatMap (registry => {
+      registry.autoRemove(instanceId) map (_ => Redirect(routes.InstanceController.index(selection)))
+    })
+  }
+
   def getInstanceNative(selection: String, instanceId: String): Action[AnyContent] = Action.async { implicit request: Request[AnyContent] =>
     RegistryProvider.getRegistry flatMap (registry => {
 

@@ -30,6 +30,9 @@ GET        /model/native                                            controllers.
 
 # Show the details and rules of a specific Fragment
 GET         /model/fragment/:name                                   controllers.ModelController.fragment(name: String, identity: String)
+
+POST        /model/fragment/:name/delete                            controllers.ModelController.deleteFragment(name: String, identity: String)
+
 # Add a new Fragment with some predefined values but EMPTY RULESETS
 POST        /model/fragment                                         controllers.ModelController.addModelElement()
 
@@ -54,6 +57,8 @@ GET         /instances                                              controllers.
 POST        /instances/:selection                                   controllers.InstanceController.addInstance(selection: String)
 
 GET         /instances/:selection/:instanceId                       controllers.InstanceController.getInstance(selection: String, instanceId: String)
+
+POST        /instances/:selection/:instanceId/delete                controllers.InstanceController.deleteInstance(selection: String, instanceId: String)
 
 GET         /instances/:selection/:instanceId/native                controllers.InstanceController.getInstanceNative(selection: String, instanceId: String)
 
