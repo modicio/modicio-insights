@@ -61,7 +61,7 @@ class ModelController @Inject()(cc: ControllerComponents) extends
           typeHandle <- typeOption.get.unfold()
           hasSingleton <- typeHandle.hasSingleton
           hasSingletonRoot <- typeHandle.hasSingletonRoot
-          allTypes <- registry.getTypes
+          allTypes <- registry.getAllTypes
           allVariants <- registry.getVariantMap
         } yield {
           Ok(views.html.pages.model_element_details(typeHandle, allTypes.toSeq, allVariants.toSeq.sortBy(_._1._1), hasSingleton, hasSingletonRoot))
@@ -188,7 +188,7 @@ class ModelController @Inject()(cc: ControllerComponents) extends
   }
 
   def addSlot(name: String, identity: String, ruleId: String): Action[AnyContent] = Action.async { implicit request: Request[AnyContent] =>
-    StringSelectionForm.form.bindFromRequest fold(
+    NewSlotForm.form.bindFromRequest fold(
       _ => {
         Future.successful(Redirect(routes.ModelController.fragment(name, identity)))
       },
@@ -196,8 +196,9 @@ class ModelController @Inject()(cc: ControllerComponents) extends
         RegistryProvider.getRegistry flatMap (registry => {
           registry.getType(name, identity) flatMap (typeOption => {
             typeOption.getOrElse(throw new Exception()).unfold() flatMap  (typeHandle => {
-              val variantTime = data.selection.toLong
-              typeHandle.applySlot(ruleId, variantTime)
+              val prefix = data.prefix
+              val variantTime = data.variantTime
+              typeHandle.applySlot(ruleId, prefix + variantTime)
               typeHandle.commit() map (_ => Redirect(routes.ModelController.fragment(name, identity)))
             })
           })
@@ -205,11 +206,11 @@ class ModelController @Inject()(cc: ControllerComponents) extends
       })
   }
 
-  def removeSlot(name: String, identity: String, ruleId: String, variantTime: Long): Action[AnyContent] = Action.async { implicit request: Request[AnyContent] =>
+  def removeSlot(name: String, identity: String, ruleId: String, variantTimeArg: String): Action[AnyContent] = Action.async { implicit request: Request[AnyContent] =>
     RegistryProvider.getRegistry flatMap (registry => {
           registry.getType(name, identity) flatMap (typeOption => {
             typeOption.getOrElse(throw new Exception()).unfold() flatMap (typeHandle => {
-              typeHandle.removeSlot(ruleId, variantTime)
+              typeHandle.removeSlot(ruleId, variantTimeArg)
               typeHandle.commit() map (_ => Redirect(routes.ModelController.fragment(name, identity)))
             })
           })

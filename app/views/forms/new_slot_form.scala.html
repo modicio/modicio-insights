@@ -25,7 +25,13 @@
     <div class="flex-container vertical">
         <div class="flex-container horizontal m-t-mini">
             <label class="col-2 p-ltrb-mini">Add Variant Slot</label>
-            <select class="input-large" name="selection">
+            <select class="input-small" name="prefix">
+                <option selected="selected">=</option>
+                @for(opt <- Seq("<", ">")) {
+                    <option value="@opt">@opt</option>
+                }
+            </select>
+            <select class="input-large" name="variantTime">
                 <option selected="selected">select</option>
                 @for(variant <- variants) {
                     <option value="@variant._1._1">
