@@ -7,7 +7,9 @@
         ":#:ROOT"
       ],
       "associations": [],
-      "attributes": [],
+      "attributes": [
+        ":Title:STRING:true"
+      ],
       "values": []
     },
     {
@@ -20,7 +22,6 @@
         ":partOf:Project:1:"
       ],
       "attributes": [
-        ":Title:STRING:true"
       ],
       "values": []
     },
