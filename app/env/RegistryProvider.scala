@@ -56,7 +56,6 @@ object RegistryProvider {
     val initialInput: NativeDSL = NativeDSLParser.parse(fileContents)
     transformer = Some(new NativeDSLTransformer(registry.get, definitionVerifier, modelVerifier))
 
-
     for {
       root <- typeFactory.newType(ModelElement.ROOT_NAME, ModelElement.REFERENCE_IDENTITY, isTemplate = true, Some(TimeIdentity.create))
       _ <- registry.get.setType(root)

@@ -18,9 +18,12 @@
 @import views.html.helper.CSRF
 @import modicio.core.TypeHandle
 @import modicio.core.DeepInstance
-@(types: Seq[TypeHandle], selected: String, selection: Seq[DeepInstance])(implicit request: RequestHeader, messagesProvider: MessagesProvider)
+@(types: Seq[TypeHandle], knownTypes: Set[String], selected: String, selection: Seq[DeepInstance])(implicit request: RequestHeader, messagesProvider: MessagesProvider)
 
 @app{
+    <div class="m-t-mini m-b-small">
+        <a href="@routes.InstanceController.showImport">import ESI</a>
+    </div>
     <div class="flex-container">
         @for(handle <- types.filter(!_.getIsTemplate)){
             @if(handle.getTypeName == selected){
@@ -57,7 +60,7 @@
     }
     </div>
 
-    @if(!selected.isBlank){
+    @if(!selected.isBlank && knownTypes.contains(selected)){
         <div class="m-t-medium">
           @helper.form(action = routes.InstanceController.addInstance(selected)) {
                         @CSRF.formField

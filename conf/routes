@@ -54,6 +54,10 @@ POST        /model/fragment/:name/rules/:ruleId/delete              controllers.
 
 GET         /instances                                              controllers.InstanceController.index(selection: String)
 
+GET         /instances/import                                       controllers.InstanceController.showImport
+
+POST        /instances/import                                       controllers.InstanceController.importInstance
+
 POST        /instances/:selection                                   controllers.InstanceController.addInstance(selection: String)
 
 GET         /instances/:selection/:instanceId                       controllers.InstanceController.getInstance(selection: String, instanceId: String)
