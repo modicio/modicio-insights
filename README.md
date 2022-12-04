@@ -1,12 +1,12 @@
-# codi-insights
+# modicio-insights
 
 :bulb: **A demonstration video is provided on YouTube [here](https://youtu.be/wL5HmuD2zJg)**.
 
 ## About
 
-This application is a minimal web starter written in Scala to demonstrate the modicio framework. This project was initially contributed as a part of the master thesis of Karl Kegel (KKegel) *Deep Models at Runtime for User-Driven Flexible Systems ([full text](https://www.researchgate.net/publication/361725823_Deep_ModelsRuntime_for_User-Driven_Flexible_Systems))* at TU-Dresden. For more detailled background information check the thesis and the modicio documentation and wiki.
+This application is a minimal web starter written in Scala to demonstrate the modicio framework. This project was initially contributed as *codi-native* and renamed in a later release. For more detailled background information check the modicio documentation and wiki.
 
-The main idea of this project is to provide a runnable and minimal application to demonstrate the framework functionality. Therefore, codi-insights provides a model view including a model editor for modicio deep-models and an user view to simulate an application frontend to use those models at runtime. Between model updates, no downtime, data-scheme or code-changes are required.
+The main idea of this project is to provide a runnable and minimal application to demonstrate the modicio framework functionality. Therefore, modicio-insights provides a model view including a model editor for modicio deep-models and an user view to simulate an application frontend to use those models at runtime. Between model updates, no downtime, data-scheme or code-changes are required.
 
 > :bulb: Note: No verificators are implemented in this demo-application. This includes checks of rules and attribute values and association multiplicities. Example 1: a nonesensical link-rule input is not rejected but accepted and ignored. Example 2: An attribute is modelled as obligatory number but any string input, also empty strings, are accepted.
 
@@ -14,10 +14,10 @@ Most functionality regarding modicio is further explained and extracted as part 
 
 ## Release Notes
 
-This case-study application contains releases to follow the revision of codi-native:
+This case-study application contains releases to follow the revision of modicio-native:
 
-* [0.1a - experiment](https://github.com/modicio/codi-insights/releases/tag/0.1a) contains the version used to execute the experiment/user-study of Karl Kegel's master thesis linked above.
-* [0.1.2](https://github.com/modicio/codi-insights/releases/tag/0.1.2) This includes: 
+* [0.1a - experiment](https://github.com/modicio/modicio-insights/releases/tag/0.1a) contains the version (called *codi-native*) used to execute the experiment/user-study of Karl Kegel's master thesis.
+* [0.1.2](https://github.com/modicio/modicio-insights/releases/tag/0.1.2) This includes: 
    * Modelling of model-space instance values
    * Creation of singleton-instances
    
@@ -30,7 +30,7 @@ Newer commits which are not yet part of a release may fix minor bugs or enhance 
 The CI pipeline of this repository creates a dist package with a runnable bash script. You can download the package by clicking on the latest CI run. 
 * Unpack the ZIP
 * Place the resources folder of this repos inside the bin folder
-* Execute the codi-native bash file inside bin on your terminal. 
+* Execute the modicio-native bash file inside bin on your terminal. 
 
 After some time, the web-app is available on localhost:9000 (or different port, check the terminal output).
 
@@ -47,7 +47,3 @@ A running java setup is required to run this application, the dist requires Open
 * Go to the root directory where this README and the ``build.sbt`` is located.
 * Execute ``sbt dist`` and check the terminal output where the generated JAR package is located
 * Alternatively, execute ``sbt run`` directly to start the app without generating a JAR
-
-### Workflows and Explanations
-
-For further explanations, check the linked thesis, here especially the chapter *Evaluations/Case-Study*. For an example workflow, check the **Experiment Instructions** part of the appendix. **An example workflow to try this application is given in [ExampleWorkflow](https://github.com/modicio/codi-insights/blob/main/ExampleWorkflow.pdf)**.

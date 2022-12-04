@@ -4,6 +4,7 @@ on:
   push:
     branches: 
       - main
+      - modicio-latest
 
 permissions:
   contents: read
@@ -29,7 +30,7 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: dist
-        path: target/universal/codi-insights-0.1.zip
+        path: target/universal/modicio-insights-0.1.zip
     - name: Download a Build Artifact
       uses: actions/download-artifact@v3.0.0
       with:

@@ -1,4 +1,4 @@
-name := """codi-insights"""
+name := """modicio-insights"""
 
 organization := "de.modicio"
 maintainer := "modicio github organisation"
