@@ -18,7 +18,7 @@
 
 package controllers
 
-import env.RegistryProvider
+import env.{RegistryProvider, VirtualFileSystem, VirtualRegistryExtension}
 import modicio.core.ModelElement
 import modicio.core.rules._
 import modicio.core.values.ConcreteValue
@@ -238,9 +238,63 @@ class ModelController @Inject()(cc: ControllerComponents) extends
   }
 
   def incrementVariant(): Action[AnyContent] = Action.async { implicit request: Request[AnyContent] =>
-    RegistryProvider.getRegistry flatMap (registry =>
-      registry.incrementVariant map (_ => Redirect(routes.ModelController.index())))
+    ForkVariantForm.form.bindFromRequest fold(
+      _ => {
+        Future.successful(Redirect(routes.ModelController.index()))
+      },
+      data => {
+        for {
+          registry <- RegistryProvider.getRegistry
+          _ <- registry.incrementVariant
+          refTime <- registry.getReferenceTimeIdentity
+        } yield {
+          VirtualRegistryExtension.addVariantName(refTime.variantId, data.withName)
+          Redirect(routes.ModelController.index())
+        }
+      })
   }
 
+  def commit(): Action[AnyContent] = Action.async { implicit request: Request[AnyContent] =>
+    CommitVersionForm.form.bindFromRequest fold(
+      _ => {
+        Future.successful(Redirect(routes.ModelController.index()))
+      },
+      data => {
+        for {
+          registry <- RegistryProvider.getRegistry
+          refTime <- registry.getReferenceTimeIdentity
+          decomposedModel <- RegistryProvider.transformer.get.decomposeModel()
+        } yield {
+          val fileContent = NativeDSLParser.produceString(decomposedModel)
+          VirtualRegistryExtension.addVersionName(refTime.runningTime.toString, data.withName)
+          VirtualFileSystem.write(refTime.variantId + "/" + refTime.runningTime, fileContent)
+          Redirect(routes.ModelController.index())
+        }
+      })
+  }
+
+  def exchangeModel(): Action[AnyContent] = Action.async { implicit request: Request[AnyContent] =>
+    ExchangeModelForm.form.bindFromRequest fold (
+      _ => {
+        Future.successful(Redirect(routes.ModelController.index()))
+      },
+      data => {
+        for {
+          registry <- RegistryProvider.getRegistry
+        } yield {
+          val variantValue = data.variant
+          val versionValue = data.version
+
+          val variantId = ""
+          val versionId = ""
+
+          val fileContent = VirtualFileSystem.read(variantId + "/" + versionId)
+
+          //TODO
+
+          Redirect(routes.ModelController.index())
+        }
+      })
+  }
 
 }

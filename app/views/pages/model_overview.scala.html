@@ -24,6 +24,38 @@
 @app{
     <div class="full-width card shadowed m-b-small">
         <div class="p-t-small p-b-small p-r-medium p-l-medium">
+            @helper.form(action = routes.ModelController.index()) {
+                @CSRF.formField
+                <div class="flex-container bg-block-1 m-t-mini p-ltrb-mini">
+                    <div class="col-2"><b>Active Variant</b></div>
+                    <select class="col-5">
+                        <option selected>old</option>
+                        <option>new</option>
+                    </select>
+                    <button class="btn btn-bordered-prim btn-large">Load</button>
+                </div>
+            }
+            @helper.form(action = routes.ModelController.index()) {
+                @CSRF.formField
+                <div class="flex-container bg-block-1 m-t-mini p-ltrb-mini">
+                    <div class="col-2"><b>Active Commit</b></div>
+                    <select class="col-5">
+                        <option selected>c123</option>
+                        <option>b456</option>
+                    </select>
+                    <button class="btn btn-bordered-prim btn-large">Load</button>
+                </div>
+            }
+            <div class="m-t-small">
+            @helper.form(action = routes.ModelController.index()) {
+                @CSRF.formField
+                <button class="btn btn-bordered-prim btn-large">Commit</button>
+            }
+            </div>
+        </div>
+    </div>
+    <div class="full-width card shadowed m-b-small">
+        <div class="p-t-small p-b-small p-r-medium p-l-medium">
             <a target="blank" href="@routes.ModelController.native()">View Native Model</a>
             <div class="flex-container bg-block-1 m-t-mini p-ltrb-mini">
                 <div class="col-2"><b>Variant</b></div><div class="weight-2">@TimeIdentity.prettyPrintExtended(rootTime.variantTime)</div>
