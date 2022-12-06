@@ -18,6 +18,7 @@
 @import modicio.core.rules.AssociationRule
 @import modicio.core.TimeIdentity
 @import views.html.helper.CSRF
+@import modicio.core.rules.Slot
 @(rule: AssociationRule, fragmentName: String, identity: String)(implicit request: RequestHeader, messagesProvider: MessagesProvider)
 <div>
     <div class="flex-container">
@@ -31,9 +32,9 @@
     @for(slot <- rule.getInterface.getSlots){
         <div class="flex-container m-t-mini">
             <div class="bg-sec fc-white p-ltrb-mini"> [SLOT] @rule.targetName</div>
-            <div class="bg-prim fc-white p-ltrb-mini"> &#64; @TimeIdentity.prettyPrintExtended(slot.targetVariantTime)</div>
+            <div class="bg-prim fc-white p-ltrb-mini"> @Slot.parsePrefix(slot) @TimeIdentity.prettyPrintExtended(Slot.parseTimeArg(slot))</div>
             <div class="m-l-mini">
-                @helper.form(action = routes.ModelController.removeSlot(fragmentName, identity, rule.id, slot.targetVariantTime)) {
+                @helper.form(action = routes.ModelController.removeSlot(fragmentName, identity, rule.id, slot.targetVariantTimeArg)) {
                     @CSRF.formField
                     <button class="btn btn-bordered-prim btn-small">Delete</button>
                 }
