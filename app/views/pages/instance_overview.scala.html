@@ -18,18 +18,25 @@
 @import views.html.helper.CSRF
 @import modicio.core.TypeHandle
 @import modicio.core.DeepInstance
-@(types: Seq[TypeHandle], knownTypes: Set[String], selected: String, selection: Seq[DeepInstance])(implicit request: RequestHeader, messagesProvider: MessagesProvider)
+@(referenceTypes: Seq[TypeHandle], extraTypes: Set[String], selected: String, selection: Seq[DeepInstance])(implicit request: RequestHeader, messagesProvider: MessagesProvider)
 
 @app{
     <div class="m-t-mini m-b-small">
         <a href="@routes.InstanceController.showImport">import ESI</a>
     </div>
     <div class="flex-container">
-        @for(handle <- types.filter(!_.getIsTemplate)){
+        @for(handle <- referenceTypes.filter(!_.getIsTemplate)){
             @if(handle.getTypeName == selected){
                 <div class="m-r-small"><a href="@routes.InstanceController.index(handle.getTypeName)"><button class="btn btn-solid-prim p-l-small p-r-small">@handle.getTypeName</button></a></div>
             }else{
                 <div class="m-r-small"><a href="@routes.InstanceController.index(handle.getTypeName)"><button class="btn btn-solid-sec p-l-small p-r-small">@handle.getTypeName</button></a></div>
+            }
+        }
+        @for(otherName <- extraTypes){
+            @if(otherName == selected){
+                <div class="m-r-small"><a href="@routes.InstanceController.index(otherName)"><button class="btn btn-bordered-prim p-l-small p-r-small">@otherName</button></a></div>
+            }else{
+                <div class="m-r-small"><a href="@routes.InstanceController.index(otherName)"><button class="btn btn-bordered-sec p-l-small p-r-small">@otherName</button></a></div>
             }
         }
     </div>
@@ -60,7 +67,7 @@
     }
     </div>
 
-    @if(!selected.isBlank && knownTypes.contains(selected)){
+    @if(!selected.isBlank && !extraTypes.contains(selected)){
         <div class="m-t-medium">
           @helper.form(action = routes.InstanceController.addInstance(selected)) {
                         @CSRF.formField

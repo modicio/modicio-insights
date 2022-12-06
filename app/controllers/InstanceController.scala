@@ -20,7 +20,7 @@ package controllers
 
 import env.RegistryProvider
 import modicio.core.ModelElement
-import modicio.nativelang.input.{NativeDSL, NativeDSLParser, NativeDSLTransformer}
+import modicio.nativelang.input.{NativeCompartment, NativeDSL, NativeDSLParser, NativeDSLTransformer}
 
 import javax.inject.{Inject, Singleton}
 import modules.instances.formdata.{NewAssociationForm, UpdateStringValueForm}
@@ -40,12 +40,12 @@ class InstanceController @Inject()(cc: ControllerComponents) extends
   def index(selection: String): Action[AnyContent] = Action.async { implicit request: Request[AnyContent] =>
     RegistryProvider.getRegistry flatMap (registry => {
       for{
-        referenceTypeNames <- registry.getReferenceTypes
-        knownNames <- registry.getAllTypes
-        known <- Future.sequence(knownNames.map(k => registry.getType(k, ModelElement.REFERENCE_IDENTITY)))
+        referenceTypes <- registry.getReferences
+        allKnownTypeNames <- registry.getAllTypes
         deepInstances <- registry.getAll(selection)
       } yield {
-        Ok(views.html.pages.instance_overview(known.toSeq.filter(_.isDefined).map(_.get), referenceTypeNames, selection, deepInstances.toSeq))
+        val extraTypes = allKnownTypeNames diff referenceTypes.map(_.getTypeName)
+        Ok(views.html.pages.instance_overview(referenceTypes.toSeq, extraTypes, selection, deepInstances.toSeq))
       }
     })
   }
@@ -160,13 +160,10 @@ class InstanceController @Inject()(cc: ControllerComponents) extends
       },
       data => {
         var raw = data.rawText
-        
-        //TODO this is the wrong import method
-
         RegistryProvider.getRegistry flatMap (registry => {
-          val initialInput: NativeDSL = NativeDSLParser.parse(raw)
+          val initialInput: NativeCompartment = NativeDSLParser.parseCompartment(raw)
           val transformer = new NativeDSLTransformer(registry, RegistryProvider.definitionVerifier, RegistryProvider.modelVerifier)
-          transformer.extend(initialInput) map (_ => Redirect(routes.InstanceController.index("")))
+          transformer.extendInstance(initialInput) map (_ => Redirect(routes.InstanceController.index("")))
         })
       })
   }
