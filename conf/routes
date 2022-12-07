@@ -37,6 +37,8 @@ POST        /model/fragment/:name/delete                            controllers.
 POST        /model/fragment                                         controllers.ModelController.addModelElement()
 
 POST        /model/variant                                          controllers.ModelController.incrementVariant()
+POST        /model/commit                                           controllers.ModelController.commit()
+POST        /model/exchange                                         controllers.ModelController.exchangeModel()
 
 POST        /model/fragment/:name/singleton/add                     controllers.ModelController.updateSingleton(name: String, identity: String)
 

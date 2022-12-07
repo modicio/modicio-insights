@@ -24,6 +24,7 @@ import modicio.core.rules._
 import modicio.core.values.ConcreteValue
 import modicio.nativelang.input.NativeDSLParser
 import modules.model.formdata._
+import modules.model.service.ModelService
 import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc._
@@ -34,15 +35,31 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 @Singleton
-class ModelController @Inject()(cc: ControllerComponents) extends
+class ModelController @Inject()(cc: ControllerComponents, modelService: ModelService) extends
   AbstractController(cc) with I18nSupport with Logging {
 
-
   def index: Action[AnyContent] = Action.async { implicit request: Request[AnyContent] =>
-    RegistryProvider.getRegistry flatMap (registry => {
-      registry.getReferences map (references => Ok(views.html.pages.model_overview(references.toSeq,
-        references.find(_.getTypeName == ModelElement.ROOT_NAME).get.getTimeIdentity)))
-    })
+    for {
+      registry <- RegistryProvider.getRegistry
+      references <- registry.getReferences
+    } yield {
+
+      val allVariants = modelService.getAllStoredVariants
+      val activatedVariant = modelService.getActivatedVariant
+      val activatedVersion = modelService.getActivatedVersion
+      val history = modelService.getStoredHistory
+
+      //for debug:
+      val fs = VirtualFileSystem
+      val rx = VirtualRegistryExtension
+
+      Ok(views.html.pages.model_overview(references.toSeq,
+        references.find(_.getTypeName == ModelElement.ROOT_NAME).get.getTimeIdentity,
+        allVariants,
+        history,
+        activatedVariant._1,
+        activatedVersion._1))
+    }
   }
 
   def native(): Action[AnyContent] = Action.async { implicit request: Request[AnyContent] =>
@@ -249,6 +266,7 @@ class ModelController @Inject()(cc: ControllerComponents) extends
           refTime <- registry.getReferenceTimeIdentity
         } yield {
           VirtualRegistryExtension.addVariantName(refTime.variantId, data.withName)
+          modelService.setActivatedVariant(refTime.variantId)
           Redirect(routes.ModelController.index())
         }
       })
@@ -260,16 +278,7 @@ class ModelController @Inject()(cc: ControllerComponents) extends
         Future.successful(Redirect(routes.ModelController.index()))
       },
       data => {
-        for {
-          registry <- RegistryProvider.getRegistry
-          refTime <- registry.getReferenceTimeIdentity
-          decomposedModel <- RegistryProvider.transformer.get.decomposeModel()
-        } yield {
-          val fileContent = NativeDSLParser.produceString(decomposedModel)
-          VirtualRegistryExtension.addVersionName(refTime.runningTime.toString, data.withName)
-          VirtualFileSystem.write(refTime.variantId + "/" + refTime.runningTime, fileContent)
-          Redirect(routes.ModelController.index())
-        }
+        modelService.commit(data.withName) map (_ => Redirect(routes.ModelController.index()))
       })
   }
 
@@ -279,19 +288,19 @@ class ModelController @Inject()(cc: ControllerComponents) extends
         Future.successful(Redirect(routes.ModelController.index()))
       },
       data => {
+
+        val variantValue = data.variant
+        val versionValue = data.version
+
         for {
           registry <- RegistryProvider.getRegistry
+          model <- RegistryProvider.transformer.get.transform(
+            NativeDSLParser.parse(
+              VirtualFileSystem.read(variantValue + "/" + versionValue)))
+          _ <- registry.exchangeModel(model.toSet)
         } yield {
-          val variantValue = data.variant
-          val versionValue = data.version
-
-          val variantId = ""
-          val versionId = ""
-
-          val fileContent = VirtualFileSystem.read(variantId + "/" + versionId)
-
-          //TODO
-
+          modelService.setActivatedVersion(data.version)
+          modelService.setActivatedVariant(data.variant)
           Redirect(routes.ModelController.index())
         }
       })
