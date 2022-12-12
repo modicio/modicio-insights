@@ -1,6 +1,6 @@
 # modicio-insights
 
-:bulb: **A demonstration video is provided on YouTube [here](https://youtu.be/wL5HmuD2zJg)**.
+:bulb: **A demonstration video is provided on YouTube [here](https://youtu.be/SYLBG8tRcUg)**.
 
 ## About
 
