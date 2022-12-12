@@ -19,22 +19,116 @@
 @import modicio.core.TypeHandle
 @import modicio.core.TimeIdentity
 @import views.html.helper.CSRF
-@(types: Seq[TypeHandle], rootTime: TimeIdentity)(implicit request: RequestHeader, messagesProvider: MessagesProvider)
+@(types: Seq[TypeHandle], rootTime: TimeIdentity, allVariants: Seq[(String, String)], history: Map[(String, String), Seq[(String, String)]],
+        activatedVariant: String, activatedCommit: String)(implicit request: RequestHeader, messagesProvider: MessagesProvider)
 
 @app{
     <div class="full-width card shadowed m-b-small">
         <div class="p-t-small p-b-small p-r-medium p-l-medium">
+
+
+            @helper.form(action = routes.ModelController.exchangeModel()) {
+                @CSRF.formField
+                <div class="flex-container m-t-mini p-ltrb-mini">
+                    <div class="col-3"><b>Origin Variant</b></div>
+                    <div class="col-7">
+                    <select class="full-width" id="variantSelect" name="variant">
+                        @for(variant <- allVariants) {
+                            <option @if(variant._1 == activatedVariant){selected="selected"} value="@variant._1">
+                                @{variant._1 + " (" + variant._2 + ")"}
+                            </option>
+                        }
+                    </select>
+                    </div>
+                </div>
+                <div class="flex-container m-t-mini p-ltrb-mini">
+                    <div class="col-3"><b>Origin Commit</b></div>
+                    <div id="versionSelect" class="col-7">
+
+                        <!--REPLACED BY GENERATED JS CONTENT-->
+
+                        @for(hEntry <- history){
+                            @if(hEntry._1._1 == activatedVariant) {
+                                <select class="full-width" id="@{
+                                    hEntry._1._1 + '_'
+                                }" name="version">
+                                @for(version <- hEntry._2) {
+                                    <option @if(version._1 == activatedCommit) {
+                                        selected="selected"
+                                    } value="@version._1">
+                                    @{
+                                        version._1 + " (" + version._2 + ")"
+                                    }
+                                    </option>
+                                }
+                                </select>
+                            }
+                        }
+                    </div>
+                </div>
+                <div class="flex-container m-t-mini p-ltrb-mini">
+                    <div class="weight-2"></div>
+                    <button class="btn btn-solid-prim btn-large">Exchange Model</button>
+                </div>
+            }
+
+            <hr>
+
+            <div hidden>
+                @for(hEntry <- history){
+                    <select class="full-width" id="@{hEntry._1._1+'_'}" name="version">
+                        @for(version <- hEntry._2) {
+                            <option @if(version._1 == activatedCommit){selected="selected"} value="@version._1">
+                                @{version._1 + " (" + version._2 + ")"}
+                            </option>
+                        }
+                    </select>
+                }
+            </div>
+
+            <script>
+                    var variants = document.getElementById("variantSelect");
+                    var versionBox = document.getElementById("versionSelect");
+
+                    function replace() {
+                            var selected = variants.value
+                            var versionSelect = document.getElementById(selected+"_");
+                            versionBox.innerHTML = ""
+                            var copy = versionSelect.cloneNode(true)
+                            copy.id = selected
+                            versionBox.appendChild(copy)
+                        }
+
+                     variants.addEventListener("change", replace);
+                    //variants.addEventListener("change", replace);
+
+
+            </script>
+
+            <div class="m-t-small">
+            @helper.form(action = routes.ModelController.commit()) {
+                @CSRF.formField
+                <input id="commitName" class="input-large" type="text" name="withName" value="" placeholder="Commit Name"/>
+                <button class="btn btn-bordered-prim input-large">Commit</button>
+            }
+            </div>
+
+        </div>
+    </div>
+    <div class="full-width card shadowed m-b-small">
+        <div class="p-t-small p-b-small p-r-medium p-l-medium">
             <a target="blank" href="@routes.ModelController.native()">View Native Model</a>
-            <div class="flex-container bg-block-1 m-t-mini p-ltrb-mini">
+            <div class="flex-container m-t-mini p-ltrb-mini">
                 <div class="col-2"><b>Variant</b></div><div class="weight-2">@TimeIdentity.prettyPrintExtended(rootTime.variantTime)</div>
             </div>
-            <div class="flex-container bg-block-1 m-t-mini p-ltrb-mini">
+            <div class="flex-container m-t-mini p-ltrb-mini">
                 <div class="col-2"><b>Running</b></div><div class="weight-2">@TimeIdentity.prettyPrintExtended(rootTime.runningTime)</div>
             </div>
             <div class="m-t-small">
             @helper.form(action = routes.ModelController.incrementVariant()) {
                 @CSRF.formField
-                <button class="btn btn-bordered-prim btn-large">Increment Variant</button>
+                <input id="commitName" class="input-large" type="text" name="withName" value="" placeholder="Variant Name"/>
+                <button class="btn btn-bordered-prim input-large">Fork Variant</button>
             }
             </div>
         </div>

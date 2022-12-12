@@ -21,6 +21,7 @@ package env
 import modicio.core.{InstanceFactory, ModelElement, Registry, Rule, TimeIdentity, TypeFactory}
 import modicio.nativelang.defaults.{SimpleDefinitionVerifier, SimpleMapRegistry, SimpleModelVerifier}
 import modicio.nativelang.input.{NativeDSL, NativeDSLParser, NativeDSLTransformer}
+import modules.model.service.ModelService
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -56,7 +57,7 @@ object RegistryProvider {
     val initialInput: NativeDSL = NativeDSLParser.parse(fileContents)
     transformer = Some(new NativeDSLTransformer(registry.get, definitionVerifier, modelVerifier))
 
-    for {
+    val preset = for {
       root <- typeFactory.newType(ModelElement.ROOT_NAME, ModelElement.REFERENCE_IDENTITY, isTemplate = true, Some(TimeIdentity.create))
       _ <- registry.get.setType(root)
       _ <- transformer.get.extend(initialInput)
@@ -64,9 +65,20 @@ object RegistryProvider {
       allReferences <- registry.get.getReferences
       unfoldedReferences <- Future.sequence(allReferences.filter(t => !t.getIsTemplate).map(_.unfold()))
       _ <- Future.sequence(unfoldedReferences.filter(_.isConcrete).map(_.updateSingletonRoot()))
-    } yield Future.successful()
+      refTime <- registry.get.getReferenceTimeIdentity
+    } yield {
+      val variantId = refTime.variantId
+      val versionTime = refTime.runningTime
 
+      VirtualRegistryExtension.addVariantName(variantId, "BASE")
+      VirtualRegistryExtension.setActivatedVariant(variantId)
+      VirtualRegistryExtension.setActivatedVersion(versionTime.toString)
+    }
 
+    preset flatMap(_ => {
+      val modelService = new ModelService()
+      modelService.commit("BASE")
+    })
   }
 
   def getRegistry: Future[Registry] = {
