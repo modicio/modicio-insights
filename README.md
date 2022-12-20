@@ -17,9 +17,8 @@ Most functionality regarding modicio is further explained and extracted as part 
 This case-study application contains releases to follow the revision of modicio-native:
 
 * [0.1a - experiment](https://github.com/modicio/modicio-insights/releases/tag/0.1a) contains the version (called *codi-native*) used to execute the experiment/user-study of Karl Kegel's master thesis.
-* [0.1.2](https://github.com/modicio/modicio-insights/releases/tag/0.1.2) This includes: 
-   * Modelling of model-space instance values
-   * Creation of singleton-instances
+* [0.1.2](https://github.com/modicio/modicio-insights/releases/tag/0.1.2)
+  * modicio 1.2.0 integration
    
 Newer commits which are not yet part of a release may fix minor bugs or enhance documentation. We recommend to use the latest commit for exploration.
 
