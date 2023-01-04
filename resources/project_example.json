@@ -32,7 +32,7 @@
         ":#:NamedElement"
       ],
       "associations": [
-        ":hasPart:ProjectItem:*:"
+        ":hasPart:ProjectItem:*:>0"
       ],
       "attributes": [
         ":Responsible:STRING:true",
